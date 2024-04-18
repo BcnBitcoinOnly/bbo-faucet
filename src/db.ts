@@ -1,4 +1,4 @@
-import { Db, MongoClient, ObjectID, SortOptionObject } from 'mongodb';
+import { Db, MongoClient, ObjectId } from 'mongodb';
 import * as assert from 'assert';
 
 import config from './config';
@@ -22,11 +22,11 @@ export class DB {
     db?: Db;
 
     id(id: string) {
-        return new ObjectID(id);
+        return new ObjectId(id);
     }
     async connect() {
         assert(!this.connected);
-        this.client = await MongoClient.connect(url, { useUnifiedTopology: true, useNewUrlParser: true });
+        this.client = await MongoClient.connect(url);
         this.db = this.client.db(dbname);
         this.connected = true;
     }
@@ -39,9 +39,9 @@ export class DB {
     async insert(coll: string, obj: MixedData) {
         return await this.db!.collection(coll).insertOne(obj);
     }
-    async find<T>(coll: string, query: DBQuery, sort?: string | ([string, number])[] | SortOptionObject<T>) {
+
+    async find(coll: string, query: DBQuery) {
         const cursor = this.db!.collection(coll).find(query);
-        if (sort) cursor.sort(sort);
         return await cursor.toArray();
     }
     async update(coll: string, query: MixedData, set: MixedData) {
@@ -49,7 +49,7 @@ export class DB {
             query,
             {
                 $set: set,
-                $currentDate: { "lastModified": true },
+                $currentDate: { lastModified: new Date(Date.now()) },
             }
         );
     }
@@ -58,7 +58,7 @@ export class DB {
             query,
             {
                 $set: set,
-                $currentDate: { "lastModified": true },
+                $currentDate: { lastModified: new Date(Date.now()) },
             },
             {
                 upsert: true,
