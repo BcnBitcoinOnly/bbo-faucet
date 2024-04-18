@@ -1,1 +1,5 @@
 Dockerfile
+built/
+config.ts
+node_modules/
+package-lock.json

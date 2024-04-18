@@ -1,38 +1,37 @@
-# Based on Blockstream's esplora project
+FROM node:20-alpine AS build
 
-FROM debian:stretch-slim
+WORKDIR /tmp
 
-# TODO: weed out unnecessary deps
-RUN apt-get -yq update \
-    && apt-get -yq install \
-        curl
+COPY . .
 
-RUN curl -sL https://deb.nodesource.com/setup_10.x | bash -
+RUN cp src/config.example.ts src/config.ts \
+ && npm install \
+ && ./node_modules/typescript/bin/tsc
 
-RUN apt-get -yq install nodejs
 
-RUN mkdir -p /srv/faucet
+FROM node:20-alpine
 
-COPY ./ /srv/faucet
+ENV BITCOIND_COOKIE   ""
+ENV BITCOIND_HOST     ""
+ENV BITCOIND_PASS     ""
+ENV BITCOIND_RPCPORT  ""
+ENV BITCOIND_USER     ""
+ENV EXPLORER_URL      ""
+ENV FAUCET_DAY_MAX    ""
+ENV FAUCET_HOUR_MAX   ""
+ENV FAUCET_HOUR_SPLIT ""
+ENV FAUCET_MIN        ""
+ENV FAUCET_NAME       ""
+ENV FAUCET_PASSWRD    ""
+ENV FAUCET_WEEK_MAX   ""
+ENV MONGODB_HOST      ""
 
-WORKDIR /srv/faucet
+COPY              html              /srv/faucet/html
+COPY --from=build /tmp/built        /srv/faucet/app
+COPY --from=build /tmp/node_modules /srv/faucet/node_modules
 
-SHELL ["/bin/bash", "-c"]
-
-# required to run some scripts as root (needed for docker)
-RUN npm config set unsafe-perm true \
- && npm install
-
-# cleanup
-RUN apt-get --auto-remove remove -y --purge manpages git \
- && apt-get clean \
- && apt-get autoclean \
- && rm -rf /usr/share/doc* /usr/share/man /usr/share/postgresql/*/man /var/lib/apt/lists/* /var/cache/* /tmp/* /root/.cache /*.deb /root/.cargo
-
-ENV FAUCET_NAME="Signet Faucet"
-
-COPY config.example.js config.js
+WORKDIR /srv/faucet/app
 
 EXPOSE 8123
 
-CMD ["./index.js"]
+CMD ["node", "index.js"]
