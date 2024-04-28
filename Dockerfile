@@ -4,9 +4,11 @@ WORKDIR /tmp
 
 COPY . .
 
-RUN cp src/config.example.ts src/config.ts \
- && npm install \
- && ./node_modules/typescript/bin/tsc
+RUN cp src/config.example.ts src/config.ts
+
+RUN npm install
+
+RUN ./node_modules/typescript/bin/tsc
 
 
 FROM node:20-alpine

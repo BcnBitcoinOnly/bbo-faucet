@@ -26,7 +26,7 @@ import config from './config';
 const app = express();
 
 const rlfFaucetOpts = {
-    points: 100000000,  // 1 btc
+    points: 2000000000, // 20 btc
     duration: 3600,     // per hour
 }
 
@@ -174,7 +174,7 @@ const makeClaim = async (params: MixedData, req: Request, res: Response): Promis
     if (address.match(/^[a-zA-Z0-9]+$/) === null) return res.status(400).send({ message: 'Invalid address' });
     if (!amount) amount = "0.001";
     amount = btcString2Sat(amount);
-    if (amount < 100000 || amount > 10000000) return res.status(400).send('Please check your amount and try again.');
+    if (amount < 100000 || amount > 500000000) return res.status(400).send('Please check your amount and try again.');
     let count = await visitorCount(req);
     const requireCaptcha = count > 0;
     if (requireCaptcha) {

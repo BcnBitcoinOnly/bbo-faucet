@@ -21,7 +21,7 @@
             let amount = document.getElementById('amount').value;
             if (!address) return faucet_err("Enter an address");
             if (!amount) amount = 0.001;
-            if (amount < 0.001 || amount > 0.1) return faucet_err("Invalid amount");
+            if (amount < 0.001 || amount > 5) return faucet_err("Invalid amount");
             let url = `/claim/${escape(address)}/${escape(amount)}`;
             <% if (faucetUsePass) { %>
                 let password = document.getElementById('password').value;
@@ -97,7 +97,7 @@
             </div>
         </div>
     </nav>
-    
+
     <div class="content">
         <section class="hero is-dark has-padding-top-70">
             <div class="hero-body">
@@ -110,14 +110,14 @@
                 </div>
             </div>
         </section>
-        
+
         <!-- body-->
         <section class="section">
             <div class="container ">
                 <div class="columns is-centered">
                     <div class="column is-6-desktop  is-8-tablet">
                         <div class="box has-text-centered">
-                            <h3 class="title is-size-4-desktop is-size-5">Enter address and amount (0.001-0.1)</h3>
+                            <h3 class="title is-size-4-desktop is-size-5">Enter address and amount (0.001-5)</h3>
 
                             <div id="faucet_err"></div>
                             <form id="myform" action="javascript:faucet_fetch();" autocomplete="off">
@@ -128,7 +128,7 @@
                             </div>
                             <div class="field has-margin-top-25">
                                 <div class="control">
-                                    <input class="input" id="amount" name="amount" type="number" max="0.1" min="0.001" step="0.001" placeholder="0.001" tabindex="2">
+                                    <input class="input" id="amount" name="amount" type="number" max="5" min="0.001" step="0.001" placeholder="0.001" tabindex="2">
                                 </div>
                             </div>
 
@@ -153,13 +153,13 @@
 
                             <button id="sendButton" class="button is-primary is-fullwidth has-margin-top-25" tabindex="3">Send</button>
                             </form>
-                        </div> 
+                        </div>
                     </div>
                 </div>
             </div>
         </section>
     </div>
-    
+
     <footer class="footer has-text-centered">
         <div class="container">
             <div class="columns rv-padding">
