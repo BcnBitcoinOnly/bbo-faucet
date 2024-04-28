@@ -42,7 +42,7 @@ const check = async (req: Request, _res: Response) => {
     if (config.faucetPassword) return; // we don't support banning when password is enabled
     if (!fs.existsSync('banned.txt')) return;
 
-    const ip = req.headers["x-real-ip"];
+    const ip = req.headers["x-forwarded-for"];
     if (!ip || `${ip}` === "undefined") {
         throw new Error('Internal error (IP)');
     }
@@ -100,11 +100,11 @@ if (config.faucetPassword) {
     };
 } else {
     visitorCount = async (req: Request) => {
-        const rl: rlf.RateLimiterRes | null = await rlfFaucet.get(req.headers["x-real-ip"] as string);
+        const rl: rlf.RateLimiterRes | null = await rlfFaucet.get(req.headers["x-forwarded-for"] as string);
         return rl ? rl.consumedPoints : 0;
     }
     visitorVisit = async (req: Request, _params: MixedData, weight?: number) => {
-        const addr = req.headers["x-real-ip"] as string;
+        const addr = req.headers["x-forwarded-for"] as string;
         await rlfGlob.consume(addr, 1);
         const rl = await rlfFaucet.consume(addr, weight);
         return rl.consumedPoints;

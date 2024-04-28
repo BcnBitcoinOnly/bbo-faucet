@@ -49,7 +49,7 @@ export class DB {
             query,
             {
                 $set: set,
-                $currentDate: { lastModified: new Date(Date.now()) },
+                $currentDate: { "lastModified": true },
             }
         );
     }
@@ -58,7 +58,7 @@ export class DB {
             query,
             {
                 $set: set,
-                $currentDate: { lastModified: new Date(Date.now()) },
+                $currentDate: { "lastModified": true },
             },
             {
                 upsert: true,
