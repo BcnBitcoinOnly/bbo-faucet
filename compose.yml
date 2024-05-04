@@ -1,12 +1,36 @@
 name: faucet
 
 services:
+  knots:
+    image: 1maa/bitcoin:v26.1.knots20240325
+    command: -regtest -txindex=1 -listenonion=0 -rpcbind=0.0.0.0 -rpcallowip=0.0.0.0/0 -rpcuser=knots -rpcpassword=knots
+    ports:
+      - 127.0.0.1:18443:18443
+    restart: on-failure
+    volumes:
+      - knots_data:/home/bitcoin/.bitcoin
+
   redis:
     image: redis:7-alpine
     ports:
       - 127.0.0.1:6379:6379
+    restart: on-failure
     volumes:
       - redis_data:/data
 
+  knots-setup:
+    image: 1maa/bitcoin:v26.1.knots20240325
+    environment:
+      - PRIVATE_KEY=cMt1BViQmEd6BivrPKWYbD2RoRup3jToGAnHnJCfdNRcRPBHZxrh
+      - PUBLIC_KEY=miEJbW79QHRrdRGEvvRdSNzFRgm6zbj3Hc
+    entrypoint:
+      - sh
+      - -c
+      - |
+        bitcoin-cli -rpcuser=knots -rpcpassword=knots -rpcconnect=knots:18443 -regtest -named createwallet wallet_name=faucet descriptors=false > /dev/null
+        bitcoin-cli -rpcuser=knots -rpcpassword=knots -rpcconnect=knots:18443 -regtest -named importprivkey $${PRIVATE_KEY}
+        bitcoin-cli -rpcuser=knots -rpcpassword=knots -rpcconnect=knots:18443 -regtest -named generatetoaddress 101 $${PUBLIC_KEY} > /dev/null
+
 volumes:
+  knots_data:
   redis_data:

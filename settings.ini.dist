@@ -1,3 +1,12 @@
 debug = true
 
 redis_dsn = 'tcp://127.0.0.1:6379?persistent=1'
+
+bitcoind_rpc_url = 'http://127.0.0.1:18443'
+
+; set both to null if you use bitcoind_rpc_cookie
+bitcoind_rpc_user = 'knots'
+bitcoind_rpc_pass = 'knots'
+
+; set to null if you use bitcoind_rpc_user and bitcoind_rpc_pass
+bitcoind_rpc_cookie = null
