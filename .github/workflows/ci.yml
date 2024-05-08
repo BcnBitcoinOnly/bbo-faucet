@@ -10,7 +10,7 @@ jobs:
       - uses: actions/checkout@v4
         with:
           fetch-depth: 2
-      - run: docker compose up -d knots redis
+      - run: docker compose up -d caddy php-fpm knots redis
       - run: docker compose run --rm knots-setup
       - uses: shivammathur/setup-php@v2
         with:

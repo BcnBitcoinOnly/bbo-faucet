@@ -30,7 +30,6 @@
         "sort-packages": true
     },
     "scripts": {
-        "lint": "@php vendor/bin/php-cs-fixer fix -v",
-        "serve": "@php -S 127.0.0.1:8080 -t web cli.php"
+        "lint": "@php vendor/bin/php-cs-fixer fix -v"
     }
 }
