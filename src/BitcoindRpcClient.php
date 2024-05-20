@@ -25,6 +25,17 @@ final readonly class BitcoindRpcClient
         return $this->doRequest($this->newContext('getbalance', []))->result;
     }
 
+    public function send(string $address, float $amount): string
+    {
+        // TODO throw exception on error
+        // KO: {"result":null,"error":{"code":-3,"message":"Invalid amount"},"id":"curltest"}
+        // KO: {"result":null,"error":{"code":-5,"message":"Invalid Bitcoin address: mgua351KhLdJdvxueGUrxvTTX8fJNGT4zg"},"id":"curltest"}
+        // KO: {"result":null,"error":{"code":-4,"message":"Insufficient funds"},"id":"curltest"}
+
+        // OK: {"result":{"txid":"a0855d0645e122879e2a97b9192a5fe5d95f35991c358615931b502e6925fd06","complete":true},"error":null,"id":"curltest"}
+        return $this->doRequest($this->newContext('send', [[$address => $amount], null, 'unset', 0]))->result->txid;
+    }
+
     /**
      * @param resource $context
      */

@@ -2,6 +2,7 @@
 
 declare(strict_types=1);
 
+use BBO\Faucet\BitcoindRpcClient;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
 use Slim\Factory\AppFactory;
@@ -38,6 +39,15 @@ $app = AppFactory::create();
 $app->addErrorMiddleware($settings['debug'], $settings['debug'], $settings['debug']);
 
 $app->get('/', function (ServerRequestInterface $request, ResponseInterface $response) use ($twig) {
+    return $twig->render($response, 'index.html.twig', ['faucetName' => 'BBO Faucet', 'use_pass' => false, 'use_captcha' => false]);
+});
+
+$app->post('/', function (ServerRequestInterface $request, ResponseInterface $response) use ($twig, $settings) {
+    $form = ['address' => 'mgua351KhLdJdvxueGUrxvTTX8fJNGT3zg', 'amount' => 5.0];
+
+    $rpc = new BitcoindRpcClient($settings['bitcoind_rpc_url'], $settings['bitcoind_rpc_user'], $settings['bitcoind_rpc_pass']);
+    $rpc->send($form['address'], $form['amount']);
+
     return $twig->render($response, 'index.html.twig', ['faucetName' => 'BBO Faucet', 'use_pass' => false, 'use_captcha' => false]);
 });
 
