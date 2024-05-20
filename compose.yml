@@ -29,11 +29,11 @@ services:
 
   knots:
     image: 1maa/bitcoin:v26.1.knots20240325
-    command: -regtest -txindex=1 -fallbackfee=0.0001 -listenonion=0 -rpcbind=0.0.0.0 -rpcallowip=0.0.0.0/0 -rpcuser=knots -rpcpassword=knots
     ports:
       - 127.0.0.1:18443:18443
     restart: on-failure
     volumes:
+      - ./knots.conf:/home/bitcoin/.bitcoin/bitcoin.conf
       - knots_data:/home/bitcoin/.bitcoin
 
   knots-setup:
