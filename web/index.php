@@ -55,7 +55,7 @@ $app->post('/', function (ServerRequestInterface $request, ResponseInterface $re
     $rpc = new BitcoindRpcClient($settings['bitcoind_rpc_url'], $settings['bitcoind_rpc_user'], $settings['bitcoind_rpc_pass']);
     $txId = $rpc->send($form['address'], (float) $form['amount']);
 
-    $message = is_null($settings['mempool_url']) ?
+    $message = null === $settings['mempool_url'] ?
         "Transaction sent: $txId" :
         "Transaction sent: <a href=\"{$settings['mempool_url']}/tx/{$txId}\">$txId</a>";
 
