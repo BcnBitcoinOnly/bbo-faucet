@@ -35,6 +35,8 @@ require __ROOT__.'/vendor/autoload.php';
 
 $twig = Twig::create(__ROOT__.'/views', ['debug' => $settings['debug'], 'strict_variables' => true]);
 $twig->getEnvironment()->addGlobal('faucet_name', $settings['faucet_name']);
+$twig->getEnvironment()->addGlobal('faucet_max_btc', $settings['faucet_max_btc']);
+$twig->getEnvironment()->addGlobal('faucet_min_btc', $settings['faucet_min_btc']);
 $twig->getEnvironment()->addGlobal('use_password', $settings['use_password']);
 $twig->getEnvironment()->addGlobal('use_captcha', $settings['use_captcha']);
 

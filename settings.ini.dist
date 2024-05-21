@@ -3,6 +3,8 @@ debug = true
 redis_dsn = 'tcp://redis:6379?persistent=1'
 
 faucet_name = 'Your Faucet'
+faucet_max_btc = '5.0'
+faucet_min_btc = '0.001'
 
 use_password = false
 use_captcha = false
