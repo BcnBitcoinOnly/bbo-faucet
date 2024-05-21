@@ -17,12 +17,12 @@ final readonly class BitcoindRpcClient
 
     public function getBlockCount(): int
     {
-        return $this->doRequest($this->newContext('getblockcount', []))->result;
+        return $this->doRequest('getblockcount', [])->result;
     }
 
     public function getBalance(): float
     {
-        return $this->doRequest($this->newContext('getbalance', []))->result;
+        return $this->doRequest('getbalance', [])->result;
     }
 
     public function send(string $address, float $amount): string
@@ -33,32 +33,23 @@ final readonly class BitcoindRpcClient
         // KO: {"result":null,"error":{"code":-4,"message":"Insufficient funds"},"id":"curltest"}
 
         // OK: {"result":{"txid":"a0855d0645e122879e2a97b9192a5fe5d95f35991c358615931b502e6925fd06","complete":true},"error":null,"id":"curltest"}
-        return $this->doRequest($this->newContext('send', [[$address => $amount], null, 'unset', 0]))->result->txid;
+        return $this->doRequest('send', [[$address => $amount], null, 'unset', 0])->result->txid;
     }
 
-    /**
-     * @param resource $context
-     */
-    private function doRequest($context): \stdClass
+    private function doRequest(string $method, array $params): \stdClass
     {
-        if (false === $response = file_get_contents($this->endpoint, context: $context)) {
-            throw new \RuntimeException('fug');
-        }
-
-        return json_decode($response);
-    }
-
-    /**
-     * @return resource
-     */
-    private function newContext(string $method, array $params)
-    {
-        return stream_context_create([
+        $context = stream_context_create([
             'http' => [
                 'method' => 'POST',
                 'header' => "Authorization: Basic {$this->authString}\r\nContent-Type: application/json\r\n",
                 'content' => json_encode(['jsonrpc' => '1.0', 'id' => 'faucet', 'method' => $method, 'params' => $params]),
             ],
         ]);
+
+        if (false === $response = file_get_contents($this->endpoint, context: $context)) {
+            throw new \RuntimeException('fug');
+        }
+
+        return json_decode($response);
     }
 }

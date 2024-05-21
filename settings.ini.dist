@@ -2,6 +2,11 @@ debug = true
 
 redis_dsn = 'tcp://redis:6379?persistent=1'
 
+faucet_name = 'Your Faucet'
+
+use_password = false
+use_captcha = false
+
 bitcoind_rpc_url = 'http://knots:18443'
 
 ; set both to null if you use bitcoind_rpc_cookie

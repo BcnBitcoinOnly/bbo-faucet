@@ -3,7 +3,7 @@
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>{{ faucetName }}</title>
+    <title>{{ faucet_name }}</title>
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bulma@1.0.0/css/bulma.min.css">
     <link rel="stylesheet" href="/css/main.css">
     <script src="https://unpkg.com/htmx.org@1.9.12"></script>
@@ -16,7 +16,7 @@
                 <div class="container">
                     <div class="columns">
                         <div class="column is-12-desktop">
-                            <p class="is-size-4-tablet is-size-6 has-text-centered">{{ faucetName }}!</p>
+                            <p class="is-size-4-tablet is-size-6 has-text-centered">{{ faucet_name }}!</p>
                         </div>
                     </div>
                 </div>
@@ -30,20 +30,23 @@
                         <div class="box has-text-centered">
                             <h3 class="title is-size-4-desktop is-size-5">Enter address and amount (0.001-0.1)</h3>
 
-                            <div id="faucet_err"></div>
-                            <form id="myform" action="javascript:faucet_fetch();" autocomplete="off">
-                            <div class="field has-margin-top-25">
-                                <div class="control">
-                                    <input class="input" id="address" name="address" type="text" placeholder="tb1[pq]..." tabindex="1" autocapitalize="off" pattern="^tb1[pq].{8,}" title="Use a valid signet address.">
-                                </div>
-                            </div>
-                            <div class="field has-margin-top-25">
-                                <div class="control">
-                                    <input class="input" id="amount" name="amount" type="number" max="5.0" min="0.001" step="0.001" placeholder="0.001" tabindex="2">
-                                </div>
-                            </div>
+                            {% if notification is defined %}
+                            <div class="notification {{ notification.class }}">{{ notification.message }}</div>
+                            {% endif %}
 
-                            {% if use_pass %}
+                            <form method="post" action="/" autocomplete="off">
+                                <div class="field has-margin-top-25">
+                                    <div class="control">
+                                        <input class="input" id="address" name="address" type="text" placeholder="tb1[pq]..." tabindex="1" autocapitalize="off" title="Use a valid signet address.">
+                                    </div>
+                                </div>
+                                <div class="field has-margin-top-25">
+                                    <div class="control">
+                                        <input class="input" id="amount" name="amount" type="number" max="5.0" min="0.001" step="0.001" placeholder="0.001" tabindex="2">
+                                    </div>
+                                </div>
+
+                            {% if use_password %}
                                 <div class="field has-margin-top-25">
                                     <div class="control">
                                         <input class="input" id="password" name="password" type="password" placeholder="***" tabindex="4">
@@ -64,7 +67,7 @@
 
                             <button id="sendButton" class="button is-primary is-fullwidth has-margin-top-25" tabindex="3">Send</button>
                             </form>
-                        </div> 
+                        </div>
                     </div>
                 </div>
             </div>

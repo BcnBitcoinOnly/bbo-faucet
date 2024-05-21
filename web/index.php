@@ -34,21 +34,28 @@ session_regenerate_id(delete_old_session: true);
 require __ROOT__.'/vendor/autoload.php';
 
 $twig = Twig::create(__ROOT__.'/views', ['debug' => $settings['debug'], 'strict_variables' => true]);
+$twig->getEnvironment()->addGlobal('faucet_name', $settings['faucet_name']);
+$twig->getEnvironment()->addGlobal('use_password', $settings['use_password']);
+$twig->getEnvironment()->addGlobal('use_captcha', $settings['use_captcha']);
 
 $app = AppFactory::create();
 $app->addErrorMiddleware($settings['debug'], $settings['debug'], $settings['debug']);
 
 $app->get('/', function (ServerRequestInterface $request, ResponseInterface $response) use ($twig) {
-    return $twig->render($response, 'index.html.twig', ['faucetName' => 'BBO Faucet', 'use_pass' => false, 'use_captcha' => false]);
+    return $twig->render($response, 'index.html.twig');
 });
 
 $app->post('/', function (ServerRequestInterface $request, ResponseInterface $response) use ($twig, $settings) {
-    $form = ['address' => 'mgua351KhLdJdvxueGUrxvTTX8fJNGT3zg', 'amount' => 5.0];
+    $form = $request->getParsedBody();
+
+    if (!is_array($form) || empty($form['address']) || empty($form['amount'])) {
+        return $twig->render($response, 'index.html.twig', ['notification' => ['class' => 'is-danger', 'message' => 'Invalid data']]);
+    }
 
     $rpc = new BitcoindRpcClient($settings['bitcoind_rpc_url'], $settings['bitcoind_rpc_user'], $settings['bitcoind_rpc_pass']);
-    $rpc->send($form['address'], $form['amount']);
+    $txId = $rpc->send($form['address'], (float) $form['amount']);
 
-    return $twig->render($response, 'index.html.twig', ['faucetName' => 'BBO Faucet', 'use_pass' => false, 'use_captcha' => false]);
+    return $twig->render($response, 'index.html.twig', ['notification' => ['class' => 'is-success', 'message' => 'Transaction sent: '.$txId]]);
 });
 
 $app->run();

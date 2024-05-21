@@ -25,4 +25,9 @@ final class BitcoindRpcClientTest extends TestCase
     {
         self::assertSame(50.0, $this->sut->getBalance());
     }
+
+    public function testSend(): void
+    {
+        self::assertMatchesRegularExpression('/^[0-9a-f]{64}$/', $this->sut->send('mwxHTZVYD44DZSoqCNXGzeS2LMB9smqFG6', 5.0));
+    }
 }
