@@ -9,6 +9,8 @@ use_captcha = false
 
 bitcoind_rpc_url = 'http://knots:18443'
 
+mempool_url = 'https://sigpool.bitcoinbarcelona.xyz'
+
 ; set both to null if you use bitcoind_rpc_cookie
 bitcoind_rpc_user = 'knots'
 bitcoind_rpc_pass = 'knots'

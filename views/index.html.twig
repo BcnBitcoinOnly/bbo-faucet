@@ -31,7 +31,7 @@
                             <h3 class="title is-size-4-desktop is-size-5">Enter address and amount (0.001-0.1)</h3>
 
                             {% if notification is defined %}
-                            <div class="notification {{ notification.class }}">{{ notification.message }}</div>
+                            <div class="notification {{ notification.class }}">{{ notification.message|raw }}</div>
                             {% endif %}
 
                             <form method="post" action="/" autocomplete="off">
