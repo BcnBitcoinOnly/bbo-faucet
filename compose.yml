@@ -36,19 +36,6 @@ services:
       - ./knots.conf:/home/bitcoin/.bitcoin/bitcoin.conf
       - knots_data:/home/bitcoin/.bitcoin
 
-  knots-setup:
-    image: 1maa/bitcoin:v26.1.knots20240325
-    environment:
-      - PRIVATE_KEY=cMt1BViQmEd6BivrPKWYbD2RoRup3jToGAnHnJCfdNRcRPBHZxrh
-      - PUBLIC_KEY=miEJbW79QHRrdRGEvvRdSNzFRgm6zbj3Hc
-    entrypoint:
-      - sh
-      - -c
-      - |
-        bitcoin-cli -rpcuser=knots -rpcpassword=knots -rpcconnect=knots:18443 -regtest -named createwallet wallet_name=faucet descriptors=false > /dev/null
-        bitcoin-cli -rpcuser=knots -rpcpassword=knots -rpcconnect=knots:18443 -regtest -named importprivkey $${PRIVATE_KEY}
-        bitcoin-cli -rpcuser=knots -rpcpassword=knots -rpcconnect=knots:18443 -regtest -named generatetoaddress 101 $${PUBLIC_KEY} > /dev/null
-
 volumes:
   caddy_config:
   caddy_data:

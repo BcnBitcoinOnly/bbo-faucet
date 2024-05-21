@@ -13,21 +13,22 @@ final class BitcoindRpcClientTest extends TestCase
 
     protected function setUp(): void
     {
-        $this->sut = new BitcoindRpcClient($_ENV['RPC_URL'], $_ENV['RPC_USER'], $_ENV['RPC_PASS']);
+        $this->sut = new BitcoindRpcClient($_ENV['RPC_URL'], $_ENV['RPC_USER'], $_ENV['RPC_PASS'], null);
     }
 
-    public function testGetBlockCount(): void
+    public function testIntegrationScenario(): void
     {
+        $this->sut->createWallet('faucet');
+        $this->sut->generate(101);
+
         self::assertSame(101, $this->sut->getBlockCount());
-    }
-
-    public function testGetBalance(): void
-    {
         self::assertSame(50.0, $this->sut->getBalance());
-    }
 
-    public function testSend(): void
-    {
-        self::assertMatchesRegularExpression('/^[0-9a-f]{64}$/', $this->sut->send('mwxHTZVYD44DZSoqCNXGzeS2LMB9smqFG6', 5.0));
+        self::assertMatchesRegularExpression('/^[0-9a-f]{64}$/', $this->sut->send('mwxHTZVYD44DZSoqCNXGzeS2LMB9smqFG6', 1.0));
+
+        $this->sut->generate(1);
+
+        self::assertSame(102, $this->sut->getBlockCount());
+        self::assertSame(99.0, $this->sut->getBalance());
     }
 }

@@ -54,7 +54,7 @@ $app->post('/', function (ServerRequestInterface $request, ResponseInterface $re
         return $twig->render($response, 'index.html.twig', ['notification' => ['class' => 'is-danger', 'message' => 'Invalid data']]);
     }
 
-    $rpc = new BitcoindRpcClient($settings['bitcoind_rpc_url'], $settings['bitcoind_rpc_user'], $settings['bitcoind_rpc_pass']);
+    $rpc = new BitcoindRpcClient($settings['bitcoind_rpc_url'], $settings['bitcoind_rpc_user'], $settings['bitcoind_rpc_pass'], $settings['wallet_name']);
     $txId = $rpc->send($form['address'], (float) $form['amount']);
 
     $message = null === $settings['mempool_url'] ?

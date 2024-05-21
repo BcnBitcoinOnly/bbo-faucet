@@ -19,3 +19,6 @@ bitcoind_rpc_pass = 'knots'
 
 ; set to null if you use bitcoind_rpc_user and bitcoind_rpc_pass
 bitcoind_rpc_cookie = null
+
+; only needs to be specified if Bitcoin Core has multiple loaded wallets
+wallet_name = null
