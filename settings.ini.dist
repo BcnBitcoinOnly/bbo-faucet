@@ -1,10 +1,14 @@
 debug = true
 
-redis_dsn = 'tcp://redis:6379?persistent=1'
+redis_host = 'redis'
+redis_port = 6379
 
 faucet_name = 'Your Faucet'
 faucet_max_btc = '5.0'
 faucet_min_btc = '0.001'
+
+cooldown_time = 3600
+cooldown_max_btc = 20.0
 
 use_password = false
 use_captcha = false
