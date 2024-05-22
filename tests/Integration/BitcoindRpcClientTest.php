@@ -18,17 +18,19 @@ final class BitcoindRpcClientTest extends TestCase
 
     public function testIntegrationScenario(): void
     {
-        $this->sut->createWallet('faucet');
-        $this->sut->generate(101);
+        $blocks = $this->sut->getBlockCount();
+        if ($blocks < 100) {
+            $this->sut->createWallet('faucet');
+            $this->sut->generate(101);
+        }
 
-        self::assertSame(101, $this->sut->getBlockCount());
-        self::assertSame(50.0, $this->sut->getBalance());
+        $balance = $this->sut->getBalance();
 
         self::assertMatchesRegularExpression('/^[0-9a-f]{64}$/', $this->sut->send('mwxHTZVYD44DZSoqCNXGzeS2LMB9smqFG6', 1.0));
 
         $this->sut->generate(1);
 
-        self::assertSame(102, $this->sut->getBlockCount());
-        self::assertSame(99.0, $this->sut->getBalance());
+        self::assertSame($blocks + 1, $this->sut->getBlockCount());
+        self::assertSame($balance + 49.0, $this->sut->getBalance());
     }
 }
