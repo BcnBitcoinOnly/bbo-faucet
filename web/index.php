@@ -22,15 +22,6 @@ if (!extension_loaded('redis')) {
     exit('redis extension not enabled');
 }
 
-ini_set('redis.session.locking_enabled', true);
-ini_set('session.cookie_samesite', true);
-ini_set('session.save_handler', 'redis');
-ini_set('session.save_path', $settings['redis_dsn']);
-ini_set('session.use_strict_mode', true);
-
-session_start();
-session_regenerate_id(delete_old_session: true);
-
 require __ROOT__.'/vendor/autoload.php';
 
 $twig = Twig::create(__ROOT__.'/views', ['debug' => $settings['debug'], 'strict_variables' => true]);
