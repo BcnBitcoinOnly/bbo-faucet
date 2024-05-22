@@ -30,6 +30,10 @@
         "sort-packages": true
     },
     "scripts": {
-        "lint": "@php vendor/bin/php-cs-fixer fix -v"
+        "lint": "@php vendor/bin/php-cs-fixer fix -v",
+        "faucet:init": [
+            "docker compose exec knots bitcoin-cli -named createwallet wallet_name=faucet load_on_startup=true",
+            "docker compose exec knots bitcoin-cli -generate 101 > /dev/null"
+        ]
     }
 }

@@ -19,11 +19,6 @@ final class BitcoindRpcClientTest extends TestCase
     public function testIntegrationScenario(): void
     {
         $blocks = $this->sut->getBlockCount();
-        if ($blocks < 100) {
-            $this->sut->createWallet('faucet');
-            $this->sut->generate(101);
-        }
-
         $balance = $this->sut->getBalance();
 
         self::assertMatchesRegularExpression('/^[0-9a-f]{64}$/', $this->sut->send('mwxHTZVYD44DZSoqCNXGzeS2LMB9smqFG6', 1.0));
