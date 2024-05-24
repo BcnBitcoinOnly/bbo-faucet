@@ -3,18 +3,6 @@ debug = true
 redis_host = 'redis'
 redis_port = 6379
 
-faucet_name = 'Your Faucet'
-faucet_max_btc = '5.0'
-faucet_min_btc = '0.001'
-
-cooldown_time = 3600
-cooldown_max_btc = 20.0
-
-use_password = false
-use_captcha = false
-
-mempool_url = 'https://sigpool.bitcoinbarcelona.xyz'
-
 bitcoind_rpc_url = 'http://knots:18443'
 
 ; set both to null if you use bitcoind_rpc_cookie
@@ -26,3 +14,21 @@ bitcoind_rpc_cookie = null
 
 ; only needs to be specified if Bitcoin Core has multiple loaded wallets
 wallet_name = null
+
+faucet_name = 'Your Signet Faucet'
+faucet_max_btc = '5.0'
+faucet_min_btc = '0.001'
+
+mempool_url = null
+
+cooldown_time = 3600
+cooldown_max_btc = 20.0
+
+; Run this command in a shell to generate a valid hash of the password, leaving an extra space after the prompt
+; to tell the shell to exclude the command from history:
+;   $  echo -n "my_password" | php -r "echo password_hash(file_get_contents('php://stdin'), PASSWORD_BCRYPT) . PHP_EOL;"
+; Sample password_hash:
+;   '$2y$10$v4F7T3DZIzSw4u4JkaOlO.Ym4UOZWiASgnhHtaYK63/9DhNQvAMCS'
+password_hash = null
+
+use_captcha = false

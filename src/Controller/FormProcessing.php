@@ -32,14 +32,14 @@ final readonly class FormProcessing implements RequestHandlerInterface
     {
         $form = $request->getParsedBody();
         if (!\is_array($form) || empty($form['address']) || empty($form['amount']) || !is_numeric($form['amount'])) {
-            return $this->twig->render(new Response(404), 'index.html.twig', ['notification' => ['class' => 'is-danger', 'message' => 'Invalid data']]);
+            return $this->twig->render(new Response(400), 'index.html.twig', ['notification' => ['class' => 'is-danger', 'message' => 'Invalid address or amount']]);
         }
 
         /** @var SessionData $sessionData */
         $sessionData = $request->getAttribute(RedisSession::SESSION_ATTR);
         $amount = (float) $form['amount'];
         if ($sessionData->btc + $amount > $this->cooldownMaxBtc) {
-            return $this->twig->render(new Response(429), 'index.html.twig', ['notification' => ['class' => 'is-danger', 'message' => 'Too much collected. GFY.']]);
+            return $this->twig->render(new Response(429), 'index.html.twig', ['notification' => ['class' => 'is-danger', 'message' => 'Too much collected, GFY']]);
         }
 
         $txId = $this->rpc->send($form['address'], $amount);

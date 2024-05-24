@@ -32,8 +32,8 @@ final class Faucet implements ServiceProvider
             $twig->getEnvironment()->addGlobal('faucet_name', $settings['faucet_name']);
             $twig->getEnvironment()->addGlobal('faucet_max_btc', $settings['faucet_max_btc']);
             $twig->getEnvironment()->addGlobal('faucet_min_btc', $settings['faucet_min_btc']);
-            $twig->getEnvironment()->addGlobal('use_password', $settings['use_password']);
             $twig->getEnvironment()->addGlobal('use_captcha', $settings['use_captcha']);
+            $twig->getEnvironment()->addGlobal('use_password', null !== $settings['password_hash']);
 
             return $twig;
         });
@@ -43,6 +43,13 @@ final class Faucet implements ServiceProvider
                 'host' => $c->get('settings')['redis_host'],
                 'port' => $c->get('settings')['redis_port'],
             ]);
+        });
+
+        $c->set(Middleware\Password::class, static function (ContainerInterface $c): MiddlewareInterface {
+            return new Middleware\Password(
+                $c->get(Twig::class),
+                $c->get('settings')['password_hash']
+            );
         });
 
         $c->set(Middleware\RedisLock::class, static function (ContainerInterface $c): MiddlewareInterface {
@@ -96,11 +103,11 @@ final class Faucet implements ServiceProvider
             $app = AppFactory::create(container: $c);
             $app->addErrorMiddleware($debug, $debug, $debug);
 
+            $app->get('/', $c->get(Controller\LandingPage::class));
+            $app->post('/', $c->get(Controller\FormProcessing::class))->add($c->get(Middleware\Password::class));
+
             $app->add($c->get(Middleware\RedisSession::class));
             $app->add($c->get(Middleware\RedisLock::class));
-
-            $app->get('/', $c->get(Controller\LandingPage::class));
-            $app->post('/', $c->get(Controller\FormProcessing::class));
 
             return $app;
         });
