@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "8eaf5b658816681d8489af8fa6dbe02b",
+    "content-hash": "bca1f44302d6736f531345c3f963d7a8",
     "packages": [
         {
             "name": "nikic/fast-route",
@@ -1164,6 +1164,48 @@
                 }
             ],
             "time": "2024-05-16T10:04:27+00:00"
+        },
+        {
+            "name": "uma/dic",
+            "version": "v3.0.1",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/1ma/DIC.git",
+                "reference": "f21501e8bf060de172cc96764dd7326e2982a681"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/1ma/DIC/zipball/f21501e8bf060de172cc96764dd7326e2982a681",
+                "reference": "f21501e8bf060de172cc96764dd7326e2982a681",
+                "shasum": ""
+            },
+            "require": {
+                "php": "^7.3.0 || ^7.4.0 || ^8.0.0 || ^8.1.0",
+                "psr/container": "^2.0"
+            },
+            "provide": {
+                "psr/container-implementation": "^1.0"
+            },
+            "require-dev": {
+                "phpmetrics/phpmetrics": "^2.7",
+                "phpunit/phpunit": "^9.5"
+            },
+            "type": "library",
+            "autoload": {
+                "psr-4": {
+                    "UMA\\DIC\\": "src/"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "description": "A minimalistic PSR-11 container",
+            "support": {
+                "issues": "https://github.com/1ma/DIC/issues",
+                "source": "https://github.com/1ma/DIC/tree/v3.0.1"
+            },
+            "time": "2022-01-15T20:30:48+00:00"
         }
     ],
     "packages-dev": [
@@ -2666,16 +2708,16 @@
         },
         {
             "name": "react/promise",
-            "version": "v3.1.0",
+            "version": "v3.2.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/reactphp/promise.git",
-                "reference": "e563d55d1641de1dea9f5e84f3cccc66d2bfe02c"
+                "reference": "8a164643313c71354582dc850b42b33fa12a4b63"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/reactphp/promise/zipball/e563d55d1641de1dea9f5e84f3cccc66d2bfe02c",
-                "reference": "e563d55d1641de1dea9f5e84f3cccc66d2bfe02c",
+                "url": "https://api.github.com/repos/reactphp/promise/zipball/8a164643313c71354582dc850b42b33fa12a4b63",
+                "reference": "8a164643313c71354582dc850b42b33fa12a4b63",
                 "shasum": ""
             },
             "require": {
@@ -2727,7 +2769,7 @@
             ],
             "support": {
                 "issues": "https://github.com/reactphp/promise/issues",
-                "source": "https://github.com/reactphp/promise/tree/v3.1.0"
+                "source": "https://github.com/reactphp/promise/tree/v3.2.0"
             },
             "funding": [
                 {
@@ -2735,7 +2777,7 @@
                     "type": "open_collective"
                 }
             ],
-            "time": "2023-11-16T16:21:57+00:00"
+            "time": "2024-05-24T10:39:05+00:00"
         },
         {
             "name": "react/socket",
@@ -2901,12 +2943,12 @@
             "source": {
                 "type": "git",
                 "url": "https://github.com/Roave/SecurityAdvisories.git",
-                "reference": "7a1a6552ac2f0fd7131d2552be221f2dd6eb19fa"
+                "reference": "0ec6bad5f4523eda2514e89d5ea48cde6ebe7f99"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/Roave/SecurityAdvisories/zipball/7a1a6552ac2f0fd7131d2552be221f2dd6eb19fa",
-                "reference": "7a1a6552ac2f0fd7131d2552be221f2dd6eb19fa",
+                "url": "https://api.github.com/repos/Roave/SecurityAdvisories/zipball/0ec6bad5f4523eda2514e89d5ea48cde6ebe7f99",
+                "reference": "0ec6bad5f4523eda2514e89d5ea48cde6ebe7f99",
                 "shasum": ""
             },
             "conflict": {
@@ -3570,6 +3612,7 @@
                 "villagedefrance/opencart-overclocked": "<=1.11.1",
                 "vova07/yii2-fileapi-widget": "<0.1.9",
                 "vrana/adminer": "<4.8.1",
+                "vufind/vufind": ">=2,<9.1.1",
                 "waldhacker/hcaptcha": "<2.1.2",
                 "wallabag/tcpdf": "<6.2.22",
                 "wallabag/wallabag": "<2.6.7",
@@ -3690,7 +3733,7 @@
                     "type": "tidelift"
                 }
             ],
-            "time": "2024-05-20T21:04:23+00:00"
+            "time": "2024-05-23T15:04:32+00:00"
         },
         {
             "name": "sebastian/cli-parser",

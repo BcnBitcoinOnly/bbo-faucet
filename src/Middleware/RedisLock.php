@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace BBO\Faucet;
+namespace BBO\Faucet\Middleware;
 
 use Nyholm\Psr7\Response;
 use Psr\Http\Message\ResponseInterface;
@@ -54,13 +54,21 @@ LUA;
 
         $response = $handler->handle($request);
 
-        try {
-            $this->redis->evalSha(self::LOCK_RELEASE_SCRIPT_HASH, ["ip:{$ip}_lock", $lockValue], 1);
-        } catch (\RedisException) {
-            $this->redis->script('load', self::LOCK_RELEASE_SCRIPT);
-            $this->redis->evalSha(self::LOCK_RELEASE_SCRIPT_HASH, ["ip:{$ip}_lock", $lockValue], 1);
+        if (false === $this->evalUnlockingScript($ip, $lockValue)) {
+            $this->loadUnlockingScript();
+            $this->evalUnlockingScript($ip, $lockValue);
         }
 
         return $response;
+    }
+
+    private function evalUnlockingScript(string $ip, string $lockValue): bool
+    {
+        return (bool) $this->redis->evalSha(self::LOCK_RELEASE_SCRIPT_HASH, ["ip:{$ip}_lock", $lockValue], 1);
+    }
+
+    private function loadUnlockingScript(): void
+    {
+        $this->redis->script('load', self::LOCK_RELEASE_SCRIPT);
     }
 }

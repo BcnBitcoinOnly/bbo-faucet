@@ -4,16 +4,16 @@ declare(strict_types=1);
 
 namespace BBO\Faucet\Tests\Integration;
 
-use BBO\Faucet\BitcoindRpcClient;
+use BBO\Faucet\Bitcoin\RPCClient;
 use PHPUnit\Framework\TestCase;
 
-final class BitcoindRpcClientTest extends TestCase
+final class RPCClientTest extends TestCase
 {
-    private BitcoindRpcClient $sut;
+    private RPCClient $sut;
 
     protected function setUp(): void
     {
-        $this->sut = new BitcoindRpcClient($_ENV['RPC_URL'], $_ENV['RPC_USER'], $_ENV['RPC_PASS'], null);
+        $this->sut = new RPCClient($_ENV['RPC_URL'], $_ENV['RPC_USER'], $_ENV['RPC_PASS'], null);
     }
 
     public function testIntegrationScenario(): void

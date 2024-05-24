@@ -2,9 +2,9 @@
 
 declare(strict_types=1);
 
-namespace BBO\Faucet;
+namespace BBO\Faucet\Bitcoin;
 
-final readonly class BitcoindRpcClient
+final readonly class RPCClient
 {
     private string $endpoint;
     private string $authString;

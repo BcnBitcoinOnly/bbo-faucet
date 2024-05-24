@@ -13,9 +13,9 @@ cooldown_max_btc = 20.0
 use_password = false
 use_captcha = false
 
-bitcoind_rpc_url = 'http://knots:18443'
-
 mempool_url = 'https://sigpool.bitcoinbarcelona.xyz'
+
+bitcoind_rpc_url = 'http://knots:18443'
 
 ; set both to null if you use bitcoind_rpc_cookie
 bitcoind_rpc_user = 'knots'
