@@ -28,7 +28,7 @@ final readonly class RedisSession implements MiddlewareInterface
         $ip = $request->getHeaderLine('X-Forwarded-For');
 
         $json = $this->redis->get("ip:$ip");
-        $session = false === $json ? new SessionData(0.0) : SessionData::fromJson(json_decode($json));
+        $session = false === $json ? new SessionData(0.0, null) : SessionData::fromJson(json_decode($json));
 
         $response = $handler->handle($request->withAttribute(self::SESSION_ATTR, $session));
 

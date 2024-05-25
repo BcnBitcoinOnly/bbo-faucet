@@ -7,21 +7,24 @@ namespace BBO\Faucet;
 final class SessionData implements \JsonSerializable
 {
     public float $btc;
+    public ?string $captcha;
 
-    public function __construct(float $btc)
+    public function __construct(float $btc, ?string $captcha)
     {
         $this->btc = $btc;
+        $this->captcha = $captcha;
     }
 
     public function jsonSerialize(): array
     {
         return [
             'btc' => $this->btc,
+            'captcha' => $this->captcha,
         ];
     }
 
     public static function fromJson(\stdClass $session): self
     {
-        return new self($session->btc);
+        return new self($session->btc, $session->captcha);
     }
 }

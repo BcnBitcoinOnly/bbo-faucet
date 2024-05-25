@@ -7,6 +7,7 @@ namespace BBO\Faucet\DI;
 use BBO\Faucet\Bitcoin\RPCClient;
 use BBO\Faucet\Controller;
 use BBO\Faucet\Middleware;
+use Gregwar\Captcha\CaptchaBuilder;
 use Psr\Container\ContainerInterface;
 use Psr\Http\Server\MiddlewareInterface;
 use Psr\Http\Server\RequestHandlerInterface;
@@ -26,7 +27,6 @@ final class Faucet implements ServiceProvider
 
         $c->set(Twig::class, static function (ContainerInterface $c): Twig {
             $settings = $c->get('settings');
-
             $twig = Twig::create(__ROOT__.'/views', ['debug' => $settings['debug'], 'strict_variables' => true]);
 
             $twig->getEnvironment()->addGlobal('faucet_name', $settings['faucet_name']);
@@ -43,6 +43,10 @@ final class Faucet implements ServiceProvider
                 'host' => $c->get('settings')['redis_host'],
                 'port' => $c->get('settings')['redis_port'],
             ]);
+        });
+
+        $c->factory(CaptchaBuilder::class, static function (): CaptchaBuilder {
+            return new CaptchaBuilder();
         });
 
         $c->set(Middleware\Password::class, static function (ContainerInterface $c): MiddlewareInterface {
@@ -88,6 +92,10 @@ final class Faucet implements ServiceProvider
             return new Controller\LandingPage($c->get(Twig::class));
         });
 
+        $c->set(Controller\CaptchaRender::class, static function (ContainerInterface $c): RequestHandlerInterface {
+            return new Controller\CaptchaRender($c->get(CaptchaBuilder::class));
+        });
+
         $c->set(Controller\FormProcessing::class, static function (ContainerInterface $c): RequestHandlerInterface {
             return new Controller\FormProcessing(
                 $c->get(Twig::class),
@@ -104,6 +112,7 @@ final class Faucet implements ServiceProvider
             $app->addErrorMiddleware($debug, $debug, $debug);
 
             $app->get('/', $c->get(Controller\LandingPage::class));
+            $app->get('/captcha', $c->get(Controller\CaptchaRender::class));
             $app->post('/', $c->get(Controller\FormProcessing::class))->add($c->get(Middleware\Password::class));
 
             $app->add($c->get(Middleware\RedisSession::class));

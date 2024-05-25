@@ -25,7 +25,7 @@ cooldown_time = 3600
 cooldown_max_btc = 20.0
 
 ; Run this command in a shell to generate a valid hash of the password, leaving an extra space after the prompt
-; to tell the shell to exclude the command from history:
+; to exclude the command from the shell's history:
 ;   $  echo -n "my_password" | php -r "echo password_hash(file_get_contents('php://stdin'), PASSWORD_BCRYPT) . PHP_EOL;"
 ; Sample password_hash:
 ;   '$2y$10$v4F7T3DZIzSw4u4JkaOlO.Ym4UOZWiASgnhHtaYK63/9DhNQvAMCS'

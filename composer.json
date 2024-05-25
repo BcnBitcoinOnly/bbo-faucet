@@ -4,12 +4,15 @@
     "type": "project",
     "license": "MIT",
     "require": {
+        "ext-gd": "*",
+        "ext-mbstring": "*",
         "ext-redis": "*",
+        "gregwar/captcha": "^1.2",
         "nyholm/psr7": "^1.8",
         "nyholm/psr7-server": "^1.1",
         "slim/slim": "^4.13",
         "slim/twig-view": "^3.4",
-        "uma/dic": "^3.0"
+        "uma/dic": "^4.0"
     },
     "require-dev": {
         "friendsofphp/php-cs-fixer": "^3.57",
