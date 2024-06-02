@@ -5,11 +5,10 @@ redis_port = 6379
 
 bitcoind_rpc_url = 'http://knots:18443'
 
-; set both to null if you use bitcoind_rpc_cookie
 bitcoind_rpc_user = 'knots'
 bitcoind_rpc_pass = 'knots'
 
-; set to null if you use bitcoind_rpc_user and bitcoind_rpc_pass
+; when set, cookie auth takes precedence over bitcoind_rpc_user and bitcoind_rpc_pass
 bitcoind_rpc_cookie = null
 
 ; only needs to be specified if Bitcoin Core has multiple loaded wallets
@@ -21,8 +20,15 @@ faucet_min_btc = '0.001'
 
 mempool_url = null
 
+; how much time each IP is tracked in Redis (in seconds), and how many
+; BTC can each IP claim during that time interval.
 cooldown_time = 3600
 cooldown_max_btc = 20.0
+
+; hard limit on how much BTC in total can be reclaimed per period of time.
+; default: 150 BTC per hour (half of the 50 BTC subsidy over 6 blocks)
+global_cooldown = 3600
+global_max_btc = 150.0
 
 ; Run this command in a shell to generate a valid hash of the password, leaving an extra space after the prompt
 ; to exclude the command from the shell's history:
