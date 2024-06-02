@@ -24,12 +24,8 @@ final readonly class Password implements MiddlewareInterface
 
     public function process(ServerRequestInterface $request, RequestHandlerInterface $handler): ResponseInterface
     {
-        if (null === $this->bcryptHash) {
-            return $handler->handle($request);
-        }
-
         $form = $request->getParsedBody();
-        if (!\is_array($form) || empty($form['password']) || !password_verify($form['password'], $this->bcryptHash)) {
+        if (null !== $this->bcryptHash && (!\is_array($form) || empty($form['password']) || !password_verify($form['password'], $this->bcryptHash))) {
             return $this->twig->render(new Response(400), 'index.html.twig', ['notification' => ['class' => 'is-danger', 'message' => 'Incorrect Password']]);
         }
 
