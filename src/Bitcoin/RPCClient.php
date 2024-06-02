@@ -40,6 +40,11 @@ final readonly class RPCClient
         return $this->doRequest('getbalance', [])->result;
     }
 
+    public function validateaddress(string $address): bool
+    {
+        return $this->doRequest('validateaddress', [$address])->result->isvalid;
+    }
+
     public function send(string $address, float $amount): string
     {
         // TODO throw exception on error

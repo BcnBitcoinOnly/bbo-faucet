@@ -16,6 +16,12 @@ final class RPCClientTest extends TestCase
         $this->sut = new RPCClient($_ENV['RPC_URL'], $_ENV['RPC_USER'], $_ENV['RPC_PASS'], null);
     }
 
+    public function testValidateAddress(): void
+    {
+        self::assertTrue($this->sut->validateaddress('mwxHTZVYD44DZSoqCNXGzeS2LMB9smqFG6'));
+        self::assertFalse($this->sut->validateaddress('nwxHTZVYD44DZSoqCNXGzeS2LMB9smqFG6'));
+    }
+
     public function testIntegrationScenario(): void
     {
         $blocks = $this->sut->getBlockCount();
