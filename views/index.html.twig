@@ -56,10 +56,10 @@
                             {% if use_captcha %}
                                 <div class="field has-margin-top-25">
                                     <div class="control">
-                                        <img id="captcha_img" src="/captcha?{{ "now"|date("U") }}"/>
+                                        <img id="captcha_img" src="/captcha"/>
                                     </div>
                                     <div class="control">
-                                        <input class="input" id="captcha" name="captcha" type="input" placeholder="captcha" tabindex="4">
+                                        <input class="input" id="captcha" name="captcha" type="text" placeholder="captcha" tabindex="4">
                                     </div>
                                 </div>
                             {% endif %}

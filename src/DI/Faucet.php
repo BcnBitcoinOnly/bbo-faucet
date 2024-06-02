@@ -49,6 +49,13 @@ final class Faucet implements ServiceProvider
             return new CaptchaBuilder();
         });
 
+        $c->set(Middleware\Captcha::class, static function (ContainerInterface $c): MiddlewareInterface {
+            return new Middleware\Captcha(
+                $c->get(Twig::class),
+                $c->get('settings')['use_captcha']
+            );
+        });
+
         $c->set(Middleware\Password::class, static function (ContainerInterface $c): MiddlewareInterface {
             return new Middleware\Password(
                 $c->get(Twig::class),
@@ -113,7 +120,9 @@ final class Faucet implements ServiceProvider
 
             $app->get('/', $c->get(Controller\LandingPage::class));
             $app->get('/captcha', $c->get(Controller\CaptchaRender::class));
-            $app->post('/', $c->get(Controller\FormProcessing::class))->add($c->get(Middleware\Password::class));
+            $app->post('/', $c->get(Controller\FormProcessing::class))
+                ->add($c->get(Middleware\Captcha::class))
+                ->add($c->get(Middleware\Password::class));
 
             $app->add($c->get(Middleware\RedisSession::class));
             $app->add($c->get(Middleware\RedisLock::class));
