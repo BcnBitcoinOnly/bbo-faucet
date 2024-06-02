@@ -40,8 +40,13 @@ final readonly class RPCClient
         return $this->doRequest('getbalance', [])->result;
     }
 
-    public function validateaddress(string $address): bool
+    public function validateAddress(string $address): bool
     {
+        // light sanitization
+        if (!preg_match('/^[0-9a-zA-Z]+$/', $address)) {
+            return false;
+        }
+
         return $this->doRequest('validateaddress', [$address])->result->isvalid;
     }
 

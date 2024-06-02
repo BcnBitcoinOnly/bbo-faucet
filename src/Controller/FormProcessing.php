@@ -31,8 +31,12 @@ final readonly class FormProcessing implements RequestHandlerInterface
     public function handle(ServerRequestInterface $request): ResponseInterface
     {
         $form = $request->getParsedBody();
-        if (!\is_array($form) || empty($form['address']) || empty($form['amount']) || !is_numeric($form['amount'])) {
-            return $this->twig->render(new Response(400), 'index.html.twig', ['notification' => ['class' => 'is-danger', 'message' => 'Invalid address or amount']]);
+        if (!\is_array($form) || empty($form['address']) || !$this->rpc->validateAddress($form['address'])) {
+            return $this->twig->render(new Response(400), 'index.html.twig', ['notification' => ['class' => 'is-danger', 'message' => 'Invalid address']]);
+        }
+
+        if (empty($form['amount']) || !is_numeric($form['amount'])) {
+            return $this->twig->render(new Response(400), 'index.html.twig', ['notification' => ['class' => 'is-danger', 'message' => 'Invalid amount']]);
         }
 
         /** @var SessionData $sessionData */
