@@ -14,24 +14,20 @@ use Slim\Views\Twig;
 final readonly class Captcha implements MiddlewareInterface
 {
     private Twig $twig;
-    private bool $checkCaptcha;
 
-    public function __construct(Twig $twig, bool $checkCaptcha)
+    public function __construct(Twig $twig)
     {
         $this->twig = $twig;
-        $this->checkCaptcha = $checkCaptcha;
     }
 
     public function process(ServerRequestInterface $request, RequestHandlerInterface $handler): ResponseInterface
     {
-        if ($this->checkCaptcha) {
-            $form = $request->getParsedBody();
-            /** @var ?string $phrase */
-            $phrase = $request->getAttribute(RedisSession::SESSION_ATTR)->captcha;
+        $form = $request->getParsedBody();
+        /** @var ?string $phrase */
+        $phrase = $request->getAttribute(RedisSession::SESSION_ATTR)->captcha;
 
-            if (null === $phrase || !\is_array($form) || empty($form['captcha']) || $form['captcha'] !== $phrase) {
-                return $this->twig->render(new Response(400), 'index.html.twig', ['notification' => ['class' => 'is-danger', 'message' => 'Incorrect Captcha']]);
-            }
+        if (null === $phrase || !\is_array($form) || empty($form['captcha']) || $form['captcha'] !== $phrase) {
+            return $this->twig->render(new Response(400), 'index.html.twig', ['notification' => ['class' => 'is-danger', 'message' => 'Incorrect Captcha']]);
         }
 
         return $handler->handle($request);

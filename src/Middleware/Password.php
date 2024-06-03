@@ -14,9 +14,9 @@ use Slim\Views\Twig;
 final readonly class Password implements MiddlewareInterface
 {
     private Twig $twig;
-    private ?string $bcryptHash;
+    private string $bcryptHash;
 
-    public function __construct(Twig $twig, ?string $bcryptHash)
+    public function __construct(Twig $twig, string $bcryptHash)
     {
         $this->twig = $twig;
         $this->bcryptHash = $bcryptHash;
@@ -25,7 +25,7 @@ final readonly class Password implements MiddlewareInterface
     public function process(ServerRequestInterface $request, RequestHandlerInterface $handler): ResponseInterface
     {
         $form = $request->getParsedBody();
-        if (null !== $this->bcryptHash && (!\is_array($form) || empty($form['password']) || !password_verify($form['password'], $this->bcryptHash))) {
+        if (!\is_array($form) || empty($form['password']) || !password_verify($form['password'], $this->bcryptHash)) {
             return $this->twig->render(new Response(400), 'index.html.twig', ['notification' => ['class' => 'is-danger', 'message' => 'Incorrect Password']]);
         }
 

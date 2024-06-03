@@ -51,8 +51,7 @@ final class Faucet implements ServiceProvider
 
         $c->set(Middleware\Captcha::class, static function (ContainerInterface $c): MiddlewareInterface {
             return new Middleware\Captcha(
-                $c->get(Twig::class),
-                $c->get('settings')['use_captcha']
+                $c->get(Twig::class)
             );
         });
 
@@ -113,16 +112,22 @@ final class Faucet implements ServiceProvider
         });
 
         $c->set(self::class, static function (ContainerInterface $c): App {
-            $debug = $c->get('settings')['debug'];
+            $settings = $c->get('settings');
 
             $app = AppFactory::create(container: $c);
-            $app->addErrorMiddleware($debug, $debug, $debug);
+            $app->addErrorMiddleware($settings['debug'], $settings['debug'], $settings['debug']);
 
             $app->get('/', $c->get(Controller\LandingPage::class));
-            $app->get('/captcha', $c->get(Controller\CaptchaRender::class));
-            $app->post('/', $c->get(Controller\FormProcessing::class))
-                ->add($c->get(Middleware\Captcha::class))
-                ->add($c->get(Middleware\Password::class));
+            $formRoute = $app->post('/', $c->get(Controller\FormProcessing::class));
+
+            if ($settings['use_captcha']) {
+                $formRoute->add(Middleware\Captcha::class);
+                $app->get('/captcha', $c->get(Controller\CaptchaRender::class));
+            }
+
+            if (null !== $settings['password_hash']) {
+                $formRoute->add(Middleware\Password::class);
+            }
 
             $app->add($c->get(Middleware\RedisSession::class));
             $app->add($c->get(Middleware\RedisLock::class));
