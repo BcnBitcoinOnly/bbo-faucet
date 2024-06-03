@@ -28,7 +28,7 @@
     {% if use_captcha %}
         <div class="field has-margin-top-25">
             <div class="control">
-                <img id="captcha_img" src="/captcha"/>
+                <img id="captcha_img" src="/captcha?{{ 'now'|date('U') }}"/>
             </div>
             <div class="control">
                 <input class="input" id="captcha" name="captcha" type="text" placeholder="captcha" tabindex="4">
