@@ -20,6 +20,7 @@ final class RPCClientTest extends TestCase
     {
         self::assertTrue($this->sut->validateAddress('mwxHTZVYD44DZSoqCNXGzeS2LMB9smqFG6'));
         self::assertFalse($this->sut->validateAddress('nwxHTZVYD44DZSoqCNXGzeS2LMB9smqFG6'));
+        self::assertFalse($this->sut->validateAddress('32ixEdVJWo3kmvJGMTZq5jAQVZZeuwnqzo'));
     }
 
     public function testIntegrationScenario(): void
