@@ -32,18 +32,18 @@ final readonly class FormProcessing implements RequestHandlerInterface
     {
         $form = $request->getParsedBody();
         if (!\is_array($form) || empty($form['address']) || !$this->rpc->validateAddress($form['address'])) {
-            return $this->twig->render(new Response(400), 'index.html.twig', ['notification' => ['class' => 'is-danger', 'message' => 'Invalid address']]);
+            return $this->twig->render(new Response(200), 'form.html.twig', ['notification' => ['class' => 'is-danger', 'message' => 'Invalid address']]);
         }
 
         if (empty($form['amount']) || !is_numeric($form['amount'])) {
-            return $this->twig->render(new Response(400), 'index.html.twig', ['notification' => ['class' => 'is-danger', 'message' => 'Invalid amount']]);
+            return $this->twig->render(new Response(200), 'form.html.twig', ['notification' => ['class' => 'is-danger', 'message' => 'Invalid amount']]);
         }
 
         /** @var SessionData $sessionData */
         $sessionData = $request->getAttribute(RedisSession::SESSION_ATTR);
         $amount = (float) $form['amount'];
         if ($sessionData->btc + $amount > $this->cooldownMaxBtc) {
-            return $this->twig->render(new Response(429), 'index.html.twig', ['notification' => ['class' => 'is-danger', 'message' => 'Too much collected, GFY']]);
+            return $this->twig->render(new Response(200), 'form.html.twig', ['notification' => ['class' => 'is-danger', 'message' => 'Too much collected, GFY']]);
         }
 
         $txId = $this->rpc->send($form['address'], $amount);
@@ -54,6 +54,6 @@ final readonly class FormProcessing implements RequestHandlerInterface
             "Transaction sent: $txId" :
             "Transaction sent: <a href=\"{$this->mempoolUrl}/tx/{$txId}\">$txId</a>";
 
-        return $this->twig->render(new Response(200), 'index.html.twig', ['notification' => ['class' => 'is-success', 'message' => $message]]);
+        return $this->twig->render(new Response(200), 'form.html.twig', ['notification' => ['class' => 'is-success', 'message' => $message]]);
     }
 }
