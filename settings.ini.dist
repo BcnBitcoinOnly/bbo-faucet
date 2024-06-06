@@ -2,6 +2,7 @@ debug = true
 
 redis_host = 'redis'
 redis_port = 6379
+redis_prefix = 'faucet:'
 
 bitcoind_rpc_url = 'http://knots:18443'
 

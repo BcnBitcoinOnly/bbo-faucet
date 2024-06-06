@@ -39,10 +39,14 @@ final class Faucet implements ServiceProvider
         });
 
         $c->set(\Redis::class, static function (ContainerInterface $c): \Redis {
-            return new \Redis([
+            $redis = new \Redis([
                 'host' => $c->get('settings')['redis_host'],
                 'port' => $c->get('settings')['redis_port'],
             ]);
+
+            $redis->setOption(\Redis::OPT_PREFIX, $c->get('settings')['redis_prefix']);
+
+            return $redis;
         });
 
         $c->factory(CaptchaBuilder::class, static function (): CaptchaBuilder {
