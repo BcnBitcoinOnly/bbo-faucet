@@ -11,15 +11,16 @@ use Psr\Http\Server\MiddlewareInterface;
 use Psr\Http\Server\RequestHandlerInterface;
 
 /**
- * Per-IP exclusive locking implemented with a single Redis instance.
+ * Global exclusive locking implemented with a single Redis instance.
  *
  * @see https://redis.io/docs/latest/develop/use/patterns/distributed-locks/#correct-implementation-with-a-single-instance
  */
 final readonly class RedisLock implements MiddlewareInterface
 {
-    private const int LOCK_TIMEOUT = 15;
+    private const int LOCK_TIMEOUT = 5;
     private const int LOCK_WAIT_TIME = 100000;
     private const int LOCK_MAX_RETRIES = 10;
+    private const int LOCK_VALUE_LENGTH = 24;
 
     private const string LOCK_RELEASE_SCRIPT_HASH = '647c65a442733a1aa440f99908d249d13b4d6c4a';
     private const string LOCK_RELEASE_SCRIPT = <<<LUA
@@ -39,11 +40,10 @@ LUA;
 
     public function process(ServerRequestInterface $request, RequestHandlerInterface $handler): ResponseInterface
     {
-        $ip = $request->getHeaderLine('X-Forwarded-For');
-        $lockValue = base64_encode(random_bytes(24));
+        $lockValue = base64_encode(random_bytes(self::LOCK_VALUE_LENGTH));
 
         $retries = 0;
-        while (false === $this->redis->set("ip:{$ip}_lock", $lockValue, ['nx', 'ex' => self::LOCK_TIMEOUT]) && $retries < self::LOCK_MAX_RETRIES) {
+        while (false === $this->redis->set('global_lock', $lockValue, ['nx', 'ex' => self::LOCK_TIMEOUT]) && $retries < self::LOCK_MAX_RETRIES) {
             usleep(self::LOCK_WAIT_TIME);
             ++$retries;
         }
@@ -54,17 +54,17 @@ LUA;
 
         $response = $handler->handle($request);
 
-        if (false === $this->evalUnlockingScript($ip, $lockValue)) {
+        if (false === $this->runUnlockingScript($lockValue)) {
             $this->loadUnlockingScript();
-            $this->evalUnlockingScript($ip, $lockValue);
+            $this->runUnlockingScript($lockValue);
         }
 
         return $response;
     }
 
-    private function evalUnlockingScript(string $ip, string $lockValue): bool
+    private function runUnlockingScript(string $lockValue): bool
     {
-        return (bool) $this->redis->evalSha(self::LOCK_RELEASE_SCRIPT_HASH, ["ip:{$ip}_lock", $lockValue], 1);
+        return (bool) $this->redis->evalSha(self::LOCK_RELEASE_SCRIPT_HASH, ['global_lock', $lockValue], 1);
     }
 
     private function loadUnlockingScript(): void
