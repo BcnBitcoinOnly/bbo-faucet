@@ -3,5 +3,20 @@ faucet.example.com {
 	encode zstd gzip
 	php_fastcgi unix//run/php/php-fpm.sock {
 		resolve_root_symlink
+		env FAUCET_DEBUG 1
+		env FAUCET_REDIS_ENDPOINT localhost:6379
+		env FAUCET_REDIS_PREFIX faucet:
+		env FAUCET_BITCOIN_RPC_ENDPOINT http://localhost:38332
+		env FAUCET_BITCOIN_RPC_USER knots
+		env FAUCET_BITCOIN_RPC_PASS knots
+		env FAUCET_NAME "Your Signet Faucet"
+		env FAUCET_MIN_ONE_TIME_BTC 0.001
+		env FAUCET_MAX_ONE_TIME_BTC 5.0
+		env FAUCET_USER_SESSION_TTL 3600
+		env FAUCET_GLOBAL_SESSION_TTL 3600
+		env FAUCET_USE_CAPTCHA 0
+		env FAUCET_USE_BATCHING 0
+		env FAUCET_USER_SESSION_MAX_BTC 20.0
+		env FAUCET_GLOBAL_SESSION_MAX_BTC 150.0
 	}
 }
