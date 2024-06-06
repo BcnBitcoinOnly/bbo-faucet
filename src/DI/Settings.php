@@ -30,7 +30,7 @@ final readonly class Settings
     public ?string $passwordBcryptHash;
     public bool $useCaptcha;
 
-    public bool $batchTransactions;
+    public bool $useTxBatching;
 
     public function __construct(array $values)
     {
@@ -66,6 +66,6 @@ final readonly class Settings
         $this->passwordBcryptHash = $values['FAUCET_PASSWORD_BCRYPT_HASH'] ?: null;
         $this->useCaptcha = (bool) $values['FAUCET_USE_CAPTCHA'];
 
-        $this->batchTransactions = (bool) $values['FAUCET_BATCH_TXS'];
+        $this->useTxBatching = (bool) $values['FAUCET_USE_BATCHING'];
     }
 }

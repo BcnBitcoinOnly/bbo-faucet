@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace BBO\Faucet\Controller;
 
+use BBO\Faucet\Bitcoin\Batcher;
 use BBO\Faucet\Bitcoin\RPCClient;
 use Nyholm\Psr7\Response;
 use Psr\Http\Message\ResponseInterface;
@@ -17,14 +18,16 @@ final readonly class FormProcessing implements RequestHandlerInterface
     private RPCClient $rpc;
     private float $minBtc;
     private float $maxBtc;
+    private ?Batcher $batcher;
     private ?string $mempoolUrl;
 
-    public function __construct(Twig $twig, RPCClient $rpc, float $minBtc, float $maxBtc, ?string $mempoolUrl)
+    public function __construct(Twig $twig, RPCClient $rpc, float $minBtc, float $maxBtc, ?Batcher $batcher, ?string $mempoolUrl)
     {
         $this->twig = $twig;
         $this->rpc = $rpc;
         $this->minBtc = $minBtc;
         $this->maxBtc = $maxBtc;
+        $this->batcher = $batcher;
         $this->mempoolUrl = $mempoolUrl;
     }
 
@@ -39,11 +42,15 @@ final readonly class FormProcessing implements RequestHandlerInterface
             return $this->twig->render(new Response(), 'form.html.twig', ['notification' => ['class' => 'is-danger', 'message' => 'Invalid amount']]);
         }
 
-        $txId = $this->rpc->send($address, $amount);
-
-        $message = null === $this->mempoolUrl ?
-            "Transaction sent: $txId" :
-            "Transaction sent: <a href=\"{$this->mempoolUrl}/tx/{$txId}\">$txId</a>";
+        $message = 'Your transaction will be sent in a few minutes.';
+        if ($this->batcher instanceof Batcher) {
+            $this->batcher->batch($address, $amount);
+        } else {
+            $txId = $this->rpc->send($address, $amount);
+            $message = null === $this->mempoolUrl ?
+                "Transaction sent: $txId" :
+                "Transaction sent: <a href=\"{$this->mempoolUrl}/tx/{$txId}\">$txId</a>";
+        }
 
         return $this->twig->render(new Response(headers: ['X-Success' => '1']), 'form.html.twig', ['notification' => ['class' => 'is-success', 'message' => $message]]);
     }

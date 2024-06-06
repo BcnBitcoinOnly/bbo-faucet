@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace BBO\Faucet\DI;
 
+use BBO\Faucet\Bitcoin\Batcher;
 use BBO\Faucet\Bitcoin\RPCClient;
 use BBO\Faucet\Controller;
 use BBO\Faucet\Middleware;
@@ -99,6 +100,13 @@ final class Faucet implements ServiceProvider
             );
         });
 
+        $c->set(Batcher::class, static function (ContainerInterface $c): Batcher {
+            return new Batcher(
+                $c->get(\Redis::class),
+                $c->get(RPCClient::class),
+            );
+        });
+
         $c->set(RPCClient::class, static function (ContainerInterface $c): RPCClient {
             /** @var Settings $settings */
             $settings = $c->get(Settings::class);
@@ -128,6 +136,7 @@ final class Faucet implements ServiceProvider
                 $c->get(RPCClient::class),
                 $settings->minOneTimeBtc,
                 $settings->maxOneTimeBtc,
+                $settings->useTxBatching ? $c->get(Batcher::class) : null,
                 $settings->mempoolUrl
             );
         });

@@ -61,6 +61,11 @@ final readonly class RPCClient
         return $this->doRequest('send', ['outputs' => [$address => $amount], 'fee_rate' => 0])->result->txid;
     }
 
+    public function batchSend(array $payments): string
+    {
+        return $this->doRequest('send', ['outputs' => $payments, 'fee_rate' => 0])->result->txid;
+    }
+
     private function doRequest(string $method, array $params): \stdClass
     {
         $context = stream_context_create([
