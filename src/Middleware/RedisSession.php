@@ -12,27 +12,38 @@ use Psr\Http\Server\RequestHandlerInterface;
 
 final readonly class RedisSession implements MiddlewareInterface
 {
-    public const string SESSION_ATTR = 'session_data';
+    public const string USER_SESSION_ATTR = 'user_session';
+    public const string GLOBAL_SESSION_ATTR = 'global_session';
 
     private \Redis $redis;
-    private int $cooldownTime;
+    private int $userTTL;
+    private int $globalTTL;
 
-    public function __construct(\Redis $redis, int $cooldownTime)
+    public function __construct(\Redis $redis, int $userTTL, int $globalTTL)
     {
         $this->redis = $redis;
-        $this->cooldownTime = $cooldownTime;
+        $this->userTTL = $userTTL;
+        $this->globalTTL = $globalTTL;
     }
 
     public function process(ServerRequestInterface $request, RequestHandlerInterface $handler): ResponseInterface
     {
         $ip = $request->getHeaderLine('X-Forwarded-For');
 
-        $json = $this->redis->get("ip:$ip");
-        $session = false === $json ? new SessionData(0.0, null) : SessionData::fromJson(json_decode($json));
+        $userLimits = $this->redis->get("limits:$ip");
+        $userSession = false === $userLimits ? new SessionData(0.0, null) : SessionData::fromJson(json_decode($userLimits));
 
-        $response = $handler->handle($request->withAttribute(self::SESSION_ATTR, $session));
+        $globalLimits = $this->redis->get('limits:global');
+        $globalSession = false === $globalLimits ? new SessionData(0.0, null) : SessionData::fromJson(json_decode($globalLimits));
 
-        $this->redis->set("ip:$ip", json_encode($session), false === $json ? ['ex' => $this->cooldownTime] : ['keepttl']);
+        $response = $handler->handle(
+            $request
+                ->withAttribute(self::USER_SESSION_ATTR, $userSession)
+                ->withAttribute(self::GLOBAL_SESSION_ATTR, $globalSession)
+        );
+
+        $this->redis->set("limits:$ip", json_encode($userSession), false === $userLimits ? ['ex' => $this->userTTL] : ['keepttl']);
+        $this->redis->set('limits:global', json_encode($globalSession), false === $globalLimits ? ['ex' => $this->globalTTL] : ['keepttl']);
 
         return $response;
     }

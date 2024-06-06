@@ -22,7 +22,7 @@ final class CaptchaRender implements RequestHandlerInterface
 
     public function handle(ServerRequestInterface $request): ResponseInterface
     {
-        $sessionData = $request->getAttribute(RedisSession::SESSION_ATTR);
+        $sessionData = $request->getAttribute(RedisSession::USER_SESSION_ATTR);
 
         $sessionData->captcha = $this->captcha->getPhrase();
 

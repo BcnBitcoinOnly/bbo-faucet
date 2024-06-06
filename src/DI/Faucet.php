@@ -21,30 +21,34 @@ final class Faucet implements ServiceProvider
 {
     public function provide(Container $c): void
     {
-        $c->set('settings', static function (): array {
-            return parse_ini_file(__ROOT__.'/settings.ini', scanner_mode: \INI_SCANNER_TYPED);
+        $c->set(Settings::class, static function (): Settings {
+            return new Settings($_SERVER);
         });
 
         $c->set(Twig::class, static function (ContainerInterface $c): Twig {
-            $settings = $c->get('settings');
-            $twig = Twig::create(__ROOT__.'/views', ['debug' => $settings['debug'], 'strict_variables' => true]);
+            /** @var Settings $settings */
+            $settings = $c->get(Settings::class);
+            $twig = Twig::create(__ROOT__.'/views', ['debug' => $settings->debugMode, 'strict_variables' => true]);
 
-            $twig->getEnvironment()->addGlobal('faucet_name', $settings['faucet_name']);
-            $twig->getEnvironment()->addGlobal('faucet_max_btc', $settings['faucet_max_btc']);
-            $twig->getEnvironment()->addGlobal('faucet_min_btc', $settings['faucet_min_btc']);
-            $twig->getEnvironment()->addGlobal('use_captcha', $settings['use_captcha']);
-            $twig->getEnvironment()->addGlobal('use_password', null !== $settings['password_hash']);
+            $twig->getEnvironment()->addGlobal('faucet_name', $settings->faucetName);
+            $twig->getEnvironment()->addGlobal('faucet_min_btc', (string) $settings->minOneTimeBtc);
+            $twig->getEnvironment()->addGlobal('faucet_max_btc', (string) $settings->maxOneTimeBtc);
+            $twig->getEnvironment()->addGlobal('use_captcha', $settings->useCaptcha);
+            $twig->getEnvironment()->addGlobal('use_password', null !== $settings->passwordBcryptHash);
 
             return $twig;
         });
 
         $c->set(\Redis::class, static function (ContainerInterface $c): \Redis {
+            /** @var Settings $settings */
+            $settings = $c->get(Settings::class);
+
             $redis = new \Redis([
-                'host' => $c->get('settings')['redis_host'],
-                'port' => $c->get('settings')['redis_port'],
+                'host' => $settings->redisHost,
+                'port' => $settings->redisPort,
             ]);
 
-            $redis->setOption(\Redis::OPT_PREFIX, $c->get('settings')['redis_prefix']);
+            $redis->setOption(\Redis::OPT_PREFIX, $settings->redisPrefix);
 
             return $redis;
         });
@@ -59,10 +63,19 @@ final class Faucet implements ServiceProvider
             );
         });
 
+        $c->set(Middleware\Limits::class, static function (ContainerInterface $c): MiddlewareInterface {
+            return new Middleware\Captcha(
+                $c->get(Twig::class)
+            );
+        });
+
         $c->set(Middleware\Password::class, static function (ContainerInterface $c): MiddlewareInterface {
+            /** @var Settings $settings */
+            $settings = $c->get(Settings::class);
+
             return new Middleware\Password(
                 $c->get(Twig::class),
-                $c->get('settings')['password_hash']
+                $settings->passwordBcryptHash
             );
         });
 
@@ -71,30 +84,25 @@ final class Faucet implements ServiceProvider
         });
 
         $c->set(Middleware\RedisSession::class, static function (ContainerInterface $c): MiddlewareInterface {
+            /** @var Settings $settings */
+            $settings = $c->get(Settings::class);
+
             return new Middleware\RedisSession(
                 $c->get(\Redis::class),
-                $c->get('settings')['cooldown_time']
+                $settings->userSessionTtl,
+                $settings->globalSessionTtl,
             );
         });
 
         $c->set(RPCClient::class, static function (ContainerInterface $c): RPCClient {
-            $cookie = $c->get('settings')['bitcoind_rpc_cookie'];
-            $user = $c->get('settings')['bitcoind_rpc_user'];
-            $password = $c->get('settings')['bitcoind_rpc_pass'];
-
-            if (null !== $cookie) {
-                if (!is_file($cookie) || !is_readable($cookie)) {
-                    exit('Unreadable bitcoind cookie file: '.$cookie);
-                }
-
-                [$user, $password] = explode(':', file_get_contents($cookie));
-            }
+            /** @var Settings $settings */
+            $settings = $c->get(Settings::class);
 
             return new RPCClient(
-                $c->get('settings')['bitcoind_rpc_url'],
-                $user,
-                $password,
-                $c->get('settings')['wallet_name']
+                $settings->bitcoinRpcEndpoint,
+                $settings->bitcoinRpcUser,
+                $settings->bitcoinRpcPass,
+                $settings->bitcoinRpcWallet
             );
         });
 
@@ -107,29 +115,34 @@ final class Faucet implements ServiceProvider
         });
 
         $c->set(Controller\FormProcessing::class, static function (ContainerInterface $c): RequestHandlerInterface {
+            /** @var Settings $settings */
+            $settings = $c->get(Settings::class);
+
             return new Controller\FormProcessing(
                 $c->get(Twig::class),
                 $c->get(RPCClient::class),
-                $c->get('settings')['cooldown_max_btc'],
-                $c->get('settings')['mempool_url']
+                $settings->minOneTimeBtc,
+                $settings->maxOneTimeBtc,
+                $settings->mempoolUrl
             );
         });
 
         $c->set(self::class, static function (ContainerInterface $c): App {
-            $settings = $c->get('settings');
+            /** @var Settings $settings */
+            $settings = $c->get(Settings::class);
 
             $app = AppFactory::create(container: $c);
-            $app->addErrorMiddleware($settings['debug'], $settings['debug'], $settings['debug']);
+            $app->addErrorMiddleware($settings->debugMode, $settings->debugMode, $settings->debugMode);
 
             $app->get('/', $c->get(Controller\LandingPage::class));
             $formRoute = $app->post('/', $c->get(Controller\FormProcessing::class));
 
-            if ($settings['use_captcha']) {
+            if ($settings->useCaptcha) {
                 $formRoute->add(Middleware\Captcha::class);
                 $app->get('/captcha', $c->get(Controller\CaptchaRender::class));
             }
 
-            if (null !== $settings['password_hash']) {
+            if (null !== $settings->passwordBcryptHash) {
                 $formRoute->add(Middleware\Password::class);
             }
 

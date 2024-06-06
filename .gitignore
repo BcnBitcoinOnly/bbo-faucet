@@ -1,4 +1,2 @@
-.env
 compose.override.yml
-settings.ini
 vendor/

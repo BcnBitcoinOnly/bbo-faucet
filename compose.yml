@@ -17,6 +17,8 @@ services:
   php-fpm:
     image: 1maa/php-dev:8.3
     restart: on-failure
+    env_file:
+      - .env.dist
     volumes:
       - .:/var/www/signet-faucet
     working_dir: /var/www/signet-faucet

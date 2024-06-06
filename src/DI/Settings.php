@@ -1,0 +1,71 @@
+<?php
+
+declare(strict_types=1);
+
+namespace BBO\Faucet\DI;
+
+final readonly class Settings
+{
+    public bool $debugMode;
+
+    public string $redisHost;
+    public int $redisPort;
+    public string $redisPrefix;
+
+    public string $bitcoinRpcEndpoint;
+    public string $bitcoinRpcUser;
+    public string $bitcoinRpcPass;
+    public ?string $bitcoinRpcWallet;
+
+    public string $faucetName;
+    public ?string $mempoolUrl;
+    public float $minOneTimeBtc;
+    public float $maxOneTimeBtc;
+
+    public int $userSessionTtl;
+    public int $globalSessionTtl;
+    public ?float $userSessionMaxBtc;
+    public ?float $globalSessionMaxBtc;
+
+    public ?string $passwordBcryptHash;
+    public bool $useCaptcha;
+
+    public bool $batchTransactions;
+
+    public function __construct(array $values)
+    {
+        $this->debugMode = (bool) $values['FAUCET_DEBUG'];
+
+        [$this->redisHost, $redisPort] = explode(':', $values['FAUCET_REDIS_ENDPOINT']);
+        $this->redisPort = (int) $redisPort;
+        $this->redisPrefix = $values['FAUCET_REDIS_PREFIX'];
+
+        $this->bitcoinRpcEndpoint = $values['FAUCET_BITCOIN_RPC_ENDPOINT'];
+        $this->bitcoinRpcWallet = $values['FAUCET_BITCOIN_RPC_WALLET'] ?: null;
+        if ($cookie = $values['FAUCET_BITCOIN_RPC_COOKIE']) {
+            if (!is_file($cookie) || !is_readable($cookie)) {
+                exit('Unreadable bitcoind cookie file: '.$cookie);
+            }
+
+            [$this->bitcoinRpcUser, $this->bitcoinRpcPass] = explode(':', file_get_contents($cookie));
+        } else {
+            $this->bitcoinRpcUser = $values['FAUCET_BITCOIN_RPC_USER'];
+            $this->bitcoinRpcPass = $values['FAUCET_BITCOIN_RPC_PASS'];
+        }
+
+        $this->faucetName = $values['FAUCET_NAME'];
+        $this->mempoolUrl = $values['FAUCET_MEMPOOL_URL'];
+        $this->minOneTimeBtc = (float) $values['FAUCET_MIN_ONE_TIME_BTC'];
+        $this->maxOneTimeBtc = (float) $values['FAUCET_MAX_ONE_TIME_BTC'];
+
+        $this->userSessionTtl = (int) $values['FAUCET_USER_SESSION_TTL'];
+        $this->userSessionMaxBtc = (float) $values['FAUCET_USER_SESSION_MAX_BTC'];
+        $this->globalSessionTtl = (int) $values['FAUCET_GLOBAL_SESSION_TTL'];
+        $this->globalSessionMaxBtc = (float) $values['FAUCET_GLOBAL_SESSION_MAX_BTC'];
+
+        $this->passwordBcryptHash = $values['FAUCET_PASSWORD_BCRYPT_HASH'] ?: null;
+        $this->useCaptcha = (bool) $values['FAUCET_USE_CAPTCHA'];
+
+        $this->batchTransactions = (bool) $values['FAUCET_BATCH_TXS'];
+    }
+}

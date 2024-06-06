@@ -24,10 +24,10 @@ final readonly class Captcha implements MiddlewareInterface
     {
         $form = $request->getParsedBody();
         /** @var ?string $phrase */
-        $phrase = $request->getAttribute(RedisSession::SESSION_ATTR)->captcha;
+        $phrase = $request->getAttribute(RedisSession::USER_SESSION_ATTR)->captcha;
 
         if (null === $phrase || !\is_array($form) || empty($form['captcha']) || $form['captcha'] !== $phrase) {
-            return $this->twig->render(new Response(200), 'form.html.twig', ['notification' => ['class' => 'is-danger', 'message' => 'Incorrect Captcha']]);
+            return $this->twig->render(new Response(), 'form.html.twig', ['notification' => ['class' => 'is-danger', 'message' => 'Incorrect Captcha']]);
         }
 
         return $handler->handle($request);
