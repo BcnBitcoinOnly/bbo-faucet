@@ -9,7 +9,7 @@ services:
       - 127.0.0.1:8080:80
     restart: on-failure
     volumes:
-      - ./Caddyfile-dev:/etc/caddy/Caddyfile
+      - ./etc/caddy/Caddyfile-dev:/etc/caddy/Caddyfile
       - ./web:/var/www/signet-faucet/web
       - caddy_config:/config
       - caddy_data:/data
@@ -35,7 +35,7 @@ services:
       - 127.0.0.1:18443:18443
     restart: on-failure
     volumes:
-      - ./knots.conf:/home/bitcoin/.bitcoin/bitcoin.conf
+      - ./etc/knots/bitcoin.conf:/home/bitcoin/.bitcoin/bitcoin.conf
       - knots_data:/home/bitcoin/.bitcoin
 
 volumes:

@@ -15,10 +15,10 @@ use Slim\Views\Twig;
 final readonly class Limits implements MiddlewareInterface
 {
     private Twig $twig;
-    private float $maxUserBtc;
-    private float $maxGlobalBtc;
+    private ?float $maxUserBtc;
+    private ?float $maxGlobalBtc;
 
-    public function __construct(Twig $twig, float $maxUserBtc, float $maxGlobalBtc)
+    public function __construct(Twig $twig, ?float $maxUserBtc, ?float $maxGlobalBtc)
     {
         $this->twig = $twig;
         $this->maxUserBtc = $maxUserBtc;
@@ -38,7 +38,8 @@ final readonly class Limits implements MiddlewareInterface
         /** @var SessionData $userSession */
         $userSession = $request->getAttribute(RedisSession::USER_SESSION_ATTR);
 
-        if ($globalSession->btc + $amount > $this->maxGlobalBtc || $userSession->btc + $amount > $this->maxUserBtc) {
+        if ((null !== $this->maxGlobalBtc && $globalSession->btc + $amount > $this->maxGlobalBtc)
+            || (null !== $this->maxUserBtc && $userSession->btc + $amount > $this->maxUserBtc)) {
             return $this->twig->render(new Response(), 'form.html.twig', ['notification' => ['class' => 'is-danger', 'message' => 'Too much collected. Try again later.']]);
         }
 

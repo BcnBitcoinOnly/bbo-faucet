@@ -64,8 +64,13 @@ final class Faucet implements ServiceProvider
         });
 
         $c->set(Middleware\Limits::class, static function (ContainerInterface $c): MiddlewareInterface {
-            return new Middleware\Captcha(
-                $c->get(Twig::class)
+            /** @var Settings $settings */
+            $settings = $c->get(Settings::class);
+
+            return new Middleware\Limits(
+                $c->get(Twig::class),
+                $settings->userSessionMaxBtc,
+                $settings->globalSessionMaxBtc
             );
         });
 
@@ -136,6 +141,7 @@ final class Faucet implements ServiceProvider
 
             $app->get('/', $c->get(Controller\LandingPage::class));
             $formRoute = $app->post('/', $c->get(Controller\FormProcessing::class));
+            $formRoute->add($c->get(Middleware\Limits::class));
 
             if ($settings->useCaptcha) {
                 $formRoute->add(Middleware\Captcha::class);

@@ -30,11 +30,11 @@ final readonly class RedisSession implements MiddlewareInterface
     {
         $ip = $request->getHeaderLine('X-Forwarded-For');
 
-        $userLimits = $this->redis->get("limits:$ip");
-        $userSession = false === $userLimits ? new SessionData(0.0, null) : SessionData::fromJson(json_decode($userLimits));
+        $userJson = $this->redis->get("session:$ip");
+        $userSession = false === $userJson ? new SessionData(0.0, null) : SessionData::fromJson(json_decode($userJson));
 
-        $globalLimits = $this->redis->get('limits:global');
-        $globalSession = false === $globalLimits ? new SessionData(0.0, null) : SessionData::fromJson(json_decode($globalLimits));
+        $globalJson = $this->redis->get('session:global');
+        $globalSession = false === $globalJson ? new SessionData(0.0, null) : SessionData::fromJson(json_decode($globalJson));
 
         $response = $handler->handle(
             $request
@@ -42,8 +42,8 @@ final readonly class RedisSession implements MiddlewareInterface
                 ->withAttribute(self::GLOBAL_SESSION_ATTR, $globalSession)
         );
 
-        $this->redis->set("limits:$ip", json_encode($userSession), false === $userLimits ? ['ex' => $this->userTTL] : ['keepttl']);
-        $this->redis->set('limits:global', json_encode($globalSession), false === $globalLimits ? ['ex' => $this->globalTTL] : ['keepttl']);
+        $this->redis->set("session:$ip", json_encode($userSession), false === $userJson ? ['ex' => $this->userTTL] : ['keepttl']);
+        $this->redis->set('session:global', json_encode($globalSession), false === $globalJson ? ['ex' => $this->globalTTL] : ['keepttl']);
 
         return $response;
     }

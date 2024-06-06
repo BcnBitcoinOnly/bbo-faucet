@@ -54,14 +54,14 @@ final readonly class Settings
         }
 
         $this->faucetName = $values['FAUCET_NAME'];
-        $this->mempoolUrl = $values['FAUCET_MEMPOOL_URL'];
+        $this->mempoolUrl = $values['FAUCET_MEMPOOL_URL'] ?: null;
         $this->minOneTimeBtc = (float) $values['FAUCET_MIN_ONE_TIME_BTC'];
         $this->maxOneTimeBtc = (float) $values['FAUCET_MAX_ONE_TIME_BTC'];
 
         $this->userSessionTtl = (int) $values['FAUCET_USER_SESSION_TTL'];
-        $this->userSessionMaxBtc = (float) $values['FAUCET_USER_SESSION_MAX_BTC'];
+        $this->userSessionMaxBtc = '' === $values['FAUCET_USER_SESSION_MAX_BTC'] ? null : (float) $values['FAUCET_USER_SESSION_MAX_BTC'];
         $this->globalSessionTtl = (int) $values['FAUCET_GLOBAL_SESSION_TTL'];
-        $this->globalSessionMaxBtc = (float) $values['FAUCET_GLOBAL_SESSION_MAX_BTC'];
+        $this->globalSessionMaxBtc = '' === $values['FAUCET_GLOBAL_SESSION_MAX_BTC'] ? null : (float) $values['FAUCET_GLOBAL_SESSION_MAX_BTC'];
 
         $this->passwordBcryptHash = $values['FAUCET_PASSWORD_BCRYPT_HASH'] ?: null;
         $this->useCaptcha = (bool) $values['FAUCET_USE_CAPTCHA'];
