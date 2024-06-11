@@ -149,9 +149,8 @@ final class Faucet implements ServiceProvider
             $formRoute->add($c->get(Middleware\UsageLimits::class));
 
             if ($settings->useCaptcha) {
+                $app->get('/captcha', $c->get(Controller\CaptchaImage::class));
                 $formRoute->add(Middleware\CheckCaptcha::class);
-                $captchaRoute = $app->get('/captcha', $c->get(Controller\CaptchaImage::class));
-                $captchaRoute->add($c->get(Middleware\RedisLock::class));
             }
 
             if (null !== $settings->passwordBcryptHash) {
