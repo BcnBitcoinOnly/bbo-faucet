@@ -12,6 +12,8 @@ use Psr\Http\Server\RequestHandlerInterface;
 
 final class CaptchaImage implements RequestHandlerInterface
 {
+    private const int CAPTCHA_TTL = 900;
+
     private CaptchaBuilder $captcha;
     private \Redis $redis;
 
@@ -23,7 +25,7 @@ final class CaptchaImage implements RequestHandlerInterface
 
     public function handle(ServerRequestInterface $request): ResponseInterface
     {
-        $this->redis->set('captcha:'.$this->captcha->getPhrase(), 1);
+        $this->redis->set('captcha:'.$this->captcha->getPhrase(), 1, ['ex' => self::CAPTCHA_TTL]);
 
         ob_start();
         $this->captcha->build()->output();
