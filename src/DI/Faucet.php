@@ -58,18 +58,22 @@ final class Faucet implements ServiceProvider
             return new CaptchaBuilder();
         });
 
-        $c->set(Middleware\Captcha::class, static function (ContainerInterface $c): MiddlewareInterface {
-            return new Middleware\Captcha(
-                $c->get(Twig::class)
+        $c->set(Middleware\CheckCaptcha::class, static function (ContainerInterface $c): MiddlewareInterface {
+            return new Middleware\CheckCaptcha(
+                $c->get(Twig::class),
+                $c->get(\Redis::class)
             );
         });
 
-        $c->set(Middleware\Limits::class, static function (ContainerInterface $c): MiddlewareInterface {
+        $c->set(Middleware\UsageLimits::class, static function (ContainerInterface $c): MiddlewareInterface {
             /** @var Settings $settings */
             $settings = $c->get(Settings::class);
 
-            return new Middleware\Limits(
+            return new Middleware\UsageLimits(
                 $c->get(Twig::class),
+                $c->get(\Redis::class),
+                $settings->userSessionTtl,
+                $settings->globalSessionTtl,
                 $settings->userSessionMaxBtc,
                 $settings->globalSessionMaxBtc
             );
@@ -87,17 +91,6 @@ final class Faucet implements ServiceProvider
 
         $c->set(Middleware\RedisLock::class, static function (ContainerInterface $c): MiddlewareInterface {
             return new Middleware\RedisLock($c->get(\Redis::class));
-        });
-
-        $c->set(Middleware\RedisSession::class, static function (ContainerInterface $c): MiddlewareInterface {
-            /** @var Settings $settings */
-            $settings = $c->get(Settings::class);
-
-            return new Middleware\RedisSession(
-                $c->get(\Redis::class),
-                $settings->userSessionTtl,
-                $settings->globalSessionTtl,
-            );
         });
 
         $c->set(Batcher::class, static function (ContainerInterface $c): Batcher {
@@ -123,8 +116,11 @@ final class Faucet implements ServiceProvider
             return new Controller\LandingPage($c->get(Twig::class));
         });
 
-        $c->set(Controller\CaptchaRender::class, static function (ContainerInterface $c): RequestHandlerInterface {
-            return new Controller\CaptchaRender($c->get(CaptchaBuilder::class));
+        $c->set(Controller\CaptchaImage::class, static function (ContainerInterface $c): RequestHandlerInterface {
+            return new Controller\CaptchaImage(
+                $c->get(CaptchaBuilder::class),
+                $c->get(\Redis::class)
+            );
         });
 
         $c->set(Controller\FormProcessing::class, static function (ContainerInterface $c): RequestHandlerInterface {
@@ -150,12 +146,11 @@ final class Faucet implements ServiceProvider
 
             $app->get('/', $c->get(Controller\LandingPage::class));
             $formRoute = $app->post('/', $c->get(Controller\FormProcessing::class));
-            $formRoute->add($c->get(Middleware\Limits::class));
+            $formRoute->add($c->get(Middleware\UsageLimits::class));
 
             if ($settings->useCaptcha) {
-                $formRoute->add(Middleware\Captcha::class);
-                $captchaRoute = $app->get('/captcha', $c->get(Controller\CaptchaRender::class));
-                $captchaRoute->add($c->get(Middleware\RedisSession::class));
+                $formRoute->add(Middleware\CheckCaptcha::class);
+                $captchaRoute = $app->get('/captcha', $c->get(Controller\CaptchaImage::class));
                 $captchaRoute->add($c->get(Middleware\RedisLock::class));
             }
 
@@ -163,7 +158,6 @@ final class Faucet implements ServiceProvider
                 $formRoute->add(Middleware\Password::class);
             }
 
-            $formRoute->add($c->get(Middleware\RedisSession::class));
             $formRoute->add($c->get(Middleware\RedisLock::class));
 
             return $app;

@@ -4,7 +4,6 @@ declare(strict_types=1);
 
 namespace BBO\Faucet\Middleware;
 
-use BBO\Faucet\SessionData;
 use Nyholm\Psr7\Response;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
@@ -12,15 +11,21 @@ use Psr\Http\Server\MiddlewareInterface;
 use Psr\Http\Server\RequestHandlerInterface;
 use Slim\Views\Twig;
 
-final readonly class Limits implements MiddlewareInterface
+final readonly class UsageLimits implements MiddlewareInterface
 {
     private Twig $twig;
+    private \Redis $redis;
+    private int $userTTL;
+    private int $globalTTL;
     private ?float $maxUserBtc;
     private ?float $maxGlobalBtc;
 
-    public function __construct(Twig $twig, ?float $maxUserBtc, ?float $maxGlobalBtc)
+    public function __construct(Twig $twig, \Redis $redis, int $userTTL, int $globalTTL, ?float $maxUserBtc, ?float $maxGlobalBtc)
     {
         $this->twig = $twig;
+        $this->redis = $redis;
+        $this->userTTL = $userTTL;
+        $this->globalTTL = $globalTTL;
         $this->maxUserBtc = $maxUserBtc;
         $this->maxGlobalBtc = $maxGlobalBtc;
     }
@@ -32,22 +37,24 @@ final readonly class Limits implements MiddlewareInterface
             return $this->twig->render(new Response(), 'form.html.twig', ['notification' => ['class' => 'is-danger', 'message' => 'Invalid amount']]);
         }
 
-        /** @var SessionData $globalSession */
-        $globalSession = $request->getAttribute(RedisSession::GLOBAL_SESSION_ATTR);
+        $ip = $request->getHeaderLine('X-Forwarded-For');
 
-        /** @var SessionData $userSession */
-        $userSession = $request->getAttribute(RedisSession::USER_SESSION_ATTR);
+        $user = $this->redis->get("limits:$ip");
+        $user = false === $user ? 0.0 : (float) $user;
 
-        if ((null !== $this->maxGlobalBtc && $globalSession->btc + $amount > $this->maxGlobalBtc)
-            || (null !== $this->maxUserBtc && $userSession->btc + $amount > $this->maxUserBtc)) {
+        $global = $this->redis->get('limits:global');
+        $global = false === $global ? 0.0 : (float) $global;
+
+        if ((null !== $this->maxGlobalBtc && $global + $amount > $this->maxGlobalBtc)
+            || (null !== $this->maxUserBtc && $user + $amount > $this->maxUserBtc)) {
             return $this->twig->render(new Response(), 'form.html.twig', ['notification' => ['class' => 'is-danger', 'message' => 'Too much collected. Try again later.']]);
         }
 
         $response = $handler->handle($request);
 
         if ($response->hasHeader('X-Success')) {
-            $userSession->btc += $amount;
-            $globalSession->btc += $amount;
+            $this->redis->set("limits:$ip", $user + $amount, 0.0 === $user ? ['ex' => $this->userTTL] : ['keepttl']);
+            $this->redis->set('limits:global', $global + $amount, 0.0 === $global ? ['ex' => $this->globalTTL] : ['keepttl']);
         }
 
         return $response;

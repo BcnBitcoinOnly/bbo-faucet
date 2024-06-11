@@ -11,24 +11,26 @@ use Psr\Http\Server\MiddlewareInterface;
 use Psr\Http\Server\RequestHandlerInterface;
 use Slim\Views\Twig;
 
-final readonly class Captcha implements MiddlewareInterface
+final readonly class CheckCaptcha implements MiddlewareInterface
 {
     private Twig $twig;
+    private \Redis $redis;
 
-    public function __construct(Twig $twig)
+    public function __construct(Twig $twig, \Redis $redis)
     {
         $this->twig = $twig;
+        $this->redis = $redis;
     }
 
     public function process(ServerRequestInterface $request, RequestHandlerInterface $handler): ResponseInterface
     {
         $form = $request->getParsedBody();
-        /** @var ?string $phrase */
-        $phrase = $request->getAttribute(RedisSession::USER_SESSION_ATTR)->captcha;
 
-        if (null === $phrase || !\is_array($form) || empty($form['captcha']) || $form['captcha'] !== $phrase) {
+        if (!\is_array($form) || empty($form['captcha']) || !preg_match('/^[0-9a-zA-Z]+$/', $form['captcha']) || '1' !== $this->redis->get("captcha:{$form['captcha']}")) {
             return $this->twig->render(new Response(), 'form.html.twig', ['notification' => ['class' => 'is-danger', 'message' => 'Incorrect Captcha']]);
         }
+
+        $this->redis->del("captcha:{$form['captcha']}");
 
         return $handler->handle($request);
     }
