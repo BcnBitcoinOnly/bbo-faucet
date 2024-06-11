@@ -8,19 +8,19 @@
     <form hx-post="/" hx-target="#form-container">
         <div class="field has-margin-top-25">
             <div class="control">
-                <input class="input" id="address" name="address" type="text" placeholder="Bitcoin Address (Signet)" tabindex="1" autocapitalize="off" title="Use a valid signet address." required>
+                <input class="input" id="address" name="address" type="text" placeholder="Bitcoin Address (Signet)" autocapitalize="off" title="Use a valid signet address." required>
             </div>
         </div>
         <div class="field has-margin-top-25">
             <div class="control">
-                <input class="input" id="amount" name="amount" type="number" min="{{ faucet_min_btc }}" max="{{ faucet_max_btc }}" step="0.001" placeholder="0.001" tabindex="2" required>
+                <input class="input" id="amount" name="amount" type="number" min="{{ faucet_min_btc }}" max="{{ faucet_max_btc }}" step="0.001" placeholder="0.001" required>
             </div>
         </div>
 
     {% if use_password %}
         <div class="field has-margin-top-25">
             <div class="control">
-                <input class="input" id="password" name="password" type="password" placeholder="Enter password" tabindex="4" required>
+                <input class="input" id="password" name="password" type="password" placeholder="Enter password" required>
             </div>
         </div>
     {% endif %}
@@ -31,11 +31,11 @@
                 <img id="captcha_img" src="/captcha?{{ 'now'|date('U') }}"/>
             </div>
             <div class="control">
-                <input class="input" id="captcha" name="captcha" type="text" placeholder="captcha" tabindex="4">
+                <input class="input" id="captcha" name="captcha" type="text" placeholder="captcha">
             </div>
         </div>
     {% endif %}
 
-    <button id="sendButton" class="button is-primary is-fullwidth has-margin-top-25" tabindex="3">Send</button>
+    <button id="sendButton" class="button is-primary is-fullwidth has-margin-top-25">Send</button>
     </form>
 </div>
