@@ -26,4 +26,12 @@
         <env name="RPC_URL" value="http://knots:18443"/>
         <env name="RPC_USER" value="knots"/>
     </php>
+
+    <coverage>
+        <report>
+            <clover outputFile="build/coverage.xml"/>
+            <html outputDirectory="build/coverage"/>
+            <text outputFile="php://stdout" showOnlySummary="true"/>
+        </report>
+    </coverage>
 </phpunit>
