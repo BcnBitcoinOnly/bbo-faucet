@@ -40,7 +40,11 @@ final readonly class Settings
         $this->redisPort = (int) $redisPort;
         $this->redisPrefix = $values['FAUCET_REDIS_PREFIX'];
 
-        $this->bitcoinRpcEndpoint = $values['FAUCET_BITCOIN_RPC_ENDPOINT'];
+        if (str_ends_with($rpcEndpoint = $values['FAUCET_BITCOIN_RPC_ENDPOINT'], ':8332')) {
+            exit('Refusing to run on the standard mainnet RPC port (TCP 8332)');
+        }
+
+        $this->bitcoinRpcEndpoint = $rpcEndpoint;
         $this->bitcoinRpcWallet = $values['FAUCET_BITCOIN_RPC_WALLET'] ?: null;
         if ($cookie = $values['FAUCET_BITCOIN_RPC_COOKIE']) {
             if (!is_file($cookie) || !is_readable($cookie)) {
