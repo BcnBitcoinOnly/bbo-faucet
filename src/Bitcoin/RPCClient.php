@@ -6,6 +6,14 @@ namespace BBO\Faucet\Bitcoin;
 
 final readonly class RPCClient
 {
+    /**
+     * Before feeding unsanitized user input to bitcoind's RPC as a
+     * bitcoin address at least validate that it is an alphanumeric string.
+     *
+     * bitcoind has its own address validation logic and error handling.
+     */
+    private const string TXID_LOW_FI_REGEX = '/^[0-9a-zA-Z]+$/';
+
     private string $endpoint;
     private string $authString;
 
@@ -42,8 +50,7 @@ final readonly class RPCClient
 
     public function validateAddress(string $address): bool
     {
-        // light sanitization
-        if (!preg_match('/^[0-9a-zA-Z]+$/', $address)) {
+        if (!preg_match(self::TXID_LOW_FI_REGEX, $address)) {
             return false;
         }
 
