@@ -34,11 +34,13 @@
         "sort-packages": true
     },
     "scripts": {
-        "faucet:init": [
+        "lint": "@php vendor/bin/php-cs-fixer fix -v",
+        "mine": "docker compose exec knots bitcoin-cli -generate 1",
+        "newaddress": "docker compose exec knots bitcoin-cli getnewaddress",
+        "setup": [
             "docker compose exec knots bitcoin-cli -named createwallet wallet_name=faucet load_on_startup=true",
             "docker compose exec knots bitcoin-cli -generate 101 > /dev/null"
         ],
-        "lint": "@php vendor/bin/php-cs-fixer fix -v",
         "test": "docker compose exec php-fpm php vendor/bin/phpunit"
     }
 }

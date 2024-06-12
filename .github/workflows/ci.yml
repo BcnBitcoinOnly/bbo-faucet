@@ -16,7 +16,7 @@ jobs:
           php-version: 8.3
       - run: composer install
       - run: php vendor/bin/php-cs-fixer check -v
-      - run: composer faucet:init
+      - run: composer setup
       - run: composer test
       - if: always()
         run: docker compose down -v
