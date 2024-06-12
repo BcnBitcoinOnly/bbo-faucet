@@ -10,9 +10,9 @@ final readonly class RPCClient
      * Before feeding unsanitized user input to bitcoind's RPC as a
      * bitcoin address at least validate that it is an alphanumeric string.
      *
-     * bitcoind has its own address validation logic and error handling.
+     * bitcoind RPC has its own address validation logic and error reporting.
      */
-    private const string TXID_LOW_FI_REGEX = '/^[0-9a-zA-Z]+$/';
+    private const string ADDRESS_LOW_FI_REGEX = '/^[0-9a-zA-Z]+$/';
 
     private string $endpoint;
     private string $authString;
@@ -50,7 +50,7 @@ final readonly class RPCClient
 
     public function validateAddress(string $address): bool
     {
-        if (!preg_match(self::TXID_LOW_FI_REGEX, $address)) {
+        if (!preg_match(self::ADDRESS_LOW_FI_REGEX, $address)) {
             return false;
         }
 
@@ -65,7 +65,7 @@ final readonly class RPCClient
         // KO: {"result":null,"error":{"code":-4,"message":"Insufficient funds"},"id":"curltest"}
 
         // OK: {"result":{"txid":"a0855d0645e122879e2a97b9192a5fe5d95f35991c358615931b502e6925fd06","complete":true},"error":null,"id":"curltest"}
-        return $this->doRequest('send', ['outputs' => [$address => $amount], 'fee_rate' => 0])->result->txid;
+        return $this->batchSend([$address => $amount]);
     }
 
     public function batchSend(array $payments): string

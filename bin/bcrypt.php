@@ -4,7 +4,7 @@
 declare(strict_types=1);
 
 /*
- * Generates a bcrypt hash suitable for the FAUCET_PASSWORD_BCRYPT_HASH env var.
+ * Generate bcrypt hashes that are suitable for the FAUCET_PASSWORD_BCRYPT_HASH env var.
  */
 
 if (2 !== $argc) {

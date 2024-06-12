@@ -12,6 +12,7 @@ use Psr\Http\Server\RequestHandlerInterface;
 
 /**
  * Global exclusive locking implemented with a single Redis instance.
+ * The lock is needed on some endpoints to ensure that usage limits are read and updated atomically.
  *
  * @see https://redis.io/docs/latest/develop/use/patterns/distributed-locks/#correct-implementation-with-a-single-instance
  */

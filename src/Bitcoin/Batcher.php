@@ -6,7 +6,7 @@ namespace BBO\Faucet\Bitcoin;
 
 final readonly class Batcher
 {
-    private const string REDIS_KEY = 'batching';
+    private const string REDIS_KEY = 'pending_payments';
 
     private \Redis $redis;
     private RPCClient $rpc;
@@ -43,6 +43,8 @@ LUA;
             }
         }
 
-        return $this->rpc->batchSend($payments);
+        return empty($payments) ?
+            'No pending payments' :
+            $this->rpc->batchSend($payments);
     }
 }

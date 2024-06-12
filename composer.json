@@ -41,6 +41,6 @@
             "docker compose exec knots bitcoin-cli -named createwallet wallet_name=faucet load_on_startup=true",
             "docker compose exec knots bitcoin-cli -generate 101 > /dev/null"
         ],
-        "test": "docker compose exec php-fpm php vendor/bin/phpunit"
+        "test": "docker compose exec -u $(id -u):$(id -g) php-fpm php vendor/bin/phpunit"
     }
 }
