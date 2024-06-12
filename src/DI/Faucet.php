@@ -146,18 +146,26 @@ final class Faucet implements ServiceProvider
 
             $app->get('/', $c->get(Controller\LandingPage::class));
             $formRoute = $app->post('/', $c->get(Controller\FormProcessing::class));
-            $formRoute->add($c->get(Middleware\UsageLimits::class));
 
+            // If captcha is enabled register captcha image generation route and
+            // activate captcha enforcing middleware on the form route
             if ($settings->useCaptcha) {
                 $app->get('/captcha', $c->get(Controller\CaptchaImage::class));
                 $formRoute->add(Middleware\CheckCaptcha::class);
             }
 
+            // If password is enabled activate password checking middleware on
+            // the form route.
             if (null !== $settings->passwordBcryptHash) {
                 $formRoute->add(Middleware\Password::class);
             }
 
-            $formRoute->add($c->get(Middleware\RedisLock::class));
+            // If user and global limits are both disabled there's no need to
+            // activate the Redis spinlock nor the limit enforcement middleware.
+            if (null !== $settings->userSessionMaxBtc || null !== $settings->globalSessionMaxBtc) {
+                $formRoute->add($c->get(Middleware\UsageLimits::class));
+                $formRoute->add($c->get(Middleware\RedisLock::class));
+            }
 
             return $app;
         });

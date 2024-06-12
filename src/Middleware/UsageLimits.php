@@ -52,8 +52,11 @@ final readonly class UsageLimits implements MiddlewareInterface
 
         $response = $handler->handle($request);
 
-        if ($response->hasHeader('X-Success')) {
+        if ($response->hasHeader('X-Success') && null !== $this->maxUserBtc) {
             $this->redis->set("limits:$ip", $user + $amount, 0.0 === $user ? ['ex' => $this->userTTL] : ['keepttl']);
+        }
+
+        if ($response->hasHeader('X-Success') && null !== $this->maxGlobalBtc) {
             $this->redis->set('limits:global', $global + $amount, 0.0 === $global ? ['ex' => $this->globalTTL] : ['keepttl']);
         }
 
