@@ -23,7 +23,7 @@
 
     <php>
         <env name="RPC_PASS" value="knots"/>
-        <env name="RPC_URL" value="http://127.0.0.1:18443"/>
+        <env name="RPC_URL" value="http://knots:18443"/>
         <env name="RPC_USER" value="knots"/>
     </php>
 </phpunit>

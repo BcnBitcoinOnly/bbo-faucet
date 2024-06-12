@@ -31,8 +31,6 @@ services:
 
   knots:
     image: 1maa/bitcoin:v26.1.knots20240513
-    ports:
-      - 127.0.0.1:18443:18443
     restart: on-failure
     volumes:
       - ./etc/knots/bitcoin.conf:/home/bitcoin/.bitcoin/bitcoin.conf
