@@ -16,8 +16,9 @@ final readonly class RPCClient
 
     private string $endpoint;
     private string $authString;
+    private float $feeRate;
 
-    public function __construct(string $endpoint, string $user, string $password, ?string $walletName)
+    public function __construct(string $endpoint, string $user, string $password, float $feeRate, ?string $walletName)
     {
         if (null !== $walletName) {
             $endpoint .= '/wallet/'.$walletName;
@@ -25,6 +26,7 @@ final readonly class RPCClient
 
         $this->endpoint = $endpoint;
         $this->authString = base64_encode("$user:$password");
+        $this->feeRate = $feeRate;
     }
 
     public function createWallet(string $name): void
@@ -70,7 +72,7 @@ final readonly class RPCClient
 
     public function batchSend(array $payments): string
     {
-        return $this->doRequest('send', ['outputs' => $payments, 'fee_rate' => 0])->result->txid;
+        return $this->doRequest('send', ['outputs' => $payments, 'fee_rate' => $this->feeRate])->result->txid;
     }
 
     private function doRequest(string $method, array $params): \stdClass
@@ -82,7 +84,7 @@ final readonly class RPCClient
                     "Authorization: Basic {$this->authString}",
                     'Content-Type: application/json',
                 ],
-                'content' => json_encode(['jsonrpc' => '1.0', 'id' => 'faucet', 'method' => $method, 'params' => $params]),
+                'content' => json_encode(['jsonrpc' => '1.0', 'id' => 'bbo-faucet', 'method' => $method, 'params' => $params]),
                 'ignore_errors' => true,
             ],
         ]);

@@ -108,6 +108,7 @@ final class Faucet implements ServiceProvider
                 $settings->bitcoinRpcEndpoint,
                 $settings->bitcoinRpcUser,
                 $settings->bitcoinRpcPass,
+                $settings->feeRate,
                 $settings->bitcoinRpcWallet
             );
         });

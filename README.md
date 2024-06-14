@@ -86,6 +86,7 @@ The following environment variables can be used to configure your faucet instanc
 | `FAUCET_BITCOIN_RPC_USER`       | RPC User. Prefer cookie auth                                 | `user`                        | No               |
 | `FAUCET_BITCOIN_RPC_PASS`       | RPC Pass. Prefer cookie auth                                 | `pass`                        | No               |
 | `FAUCET_BITCOIN_RPC_WALLET`     | Wallet name. Required when the node has more than one wallet |                               | No               |
+| `FAUCET_FEE_RATE`               | Fee rate to use in the transactions. Default is 1 s/vB.      | `1`                           | No               |
 | `FAUCET_NAME`                   | Text displayed on the faucet                                 | `Your Signet Faucet`          | Yes              |
 | `FAUCET_MIN_ONE_TIME_BTC`       | Minimum payout users can claim                               | `0.001`                       | Yes              |
 | `FAUCET_MAX_ONE_TIME_BTC`       | Maximum payout users can claim                               | `5.0`                         | Yes              |

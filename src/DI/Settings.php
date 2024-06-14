@@ -16,6 +16,7 @@ final readonly class Settings
     public string $bitcoinRpcUser;
     public string $bitcoinRpcPass;
     public ?string $bitcoinRpcWallet;
+    public float $feeRate;
 
     public string $faucetName;
     public ?string $mempoolUrl;
@@ -57,6 +58,7 @@ final readonly class Settings
             $this->bitcoinRpcPass = $values['FAUCET_BITCOIN_RPC_PASS'];
         }
 
+        $this->feeRate = (float) $values['FAUCET_FEE_RATE'] ?: 1.0;
         $this->faucetName = $values['FAUCET_NAME'];
         $this->mempoolUrl = $values['FAUCET_MEMPOOL_URL'] ?: null;
         $this->minOneTimeBtc = (float) $values['FAUCET_MIN_ONE_TIME_BTC'];

@@ -13,7 +13,7 @@ final class RPCClientTest extends TestCase
 
     protected function setUp(): void
     {
-        $this->sut = new RPCClient($_ENV['RPC_URL'], $_ENV['RPC_USER'], $_ENV['RPC_PASS'], null);
+        $this->sut = new RPCClient($_ENV['RPC_URL'], $_ENV['RPC_USER'], $_ENV['RPC_PASS'], 0, null);
     }
 
     public function testValidateAddress(): void
