@@ -49,7 +49,7 @@ final readonly class FormProcessing implements RequestHandlerInterface
             $txId = $this->rpc->send($address, $amount);
             $message = null === $this->mempoolUrl ?
                 "Transaction sent: $txId" :
-                "Transaction sent: <a href=\"{$this->mempoolUrl}/tx/{$txId}\">$txId</a>";
+                "Transaction sent: <a href=\"{$this->mempoolUrl}/tx/{$txId}\" target='_blank'>$txId</a>";
         }
 
         return $this->twig->render(new Response(headers: ['X-Success' => '1']), 'form.html.twig', ['notification' => ['class' => 'is-success', 'message' => $message]]);

@@ -12,6 +12,10 @@ use Psr\Http\Server\RequestHandlerInterface;
 
 final class CaptchaImage implements RequestHandlerInterface
 {
+    /**
+     * Captchas automatically expire (are purged from Redis)
+     * after 15 minutes if they are not used.
+     */
     private const int CAPTCHA_TTL = 900;
 
     private CaptchaBuilder $captcha;
