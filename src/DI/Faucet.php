@@ -23,7 +23,7 @@ final class Faucet implements ServiceProvider
     public function provide(Container $c): void
     {
         $c->set(Settings::class, static function (): Settings {
-            return new Settings($_SERVER);
+            return new Settings(array_merge($_SERVER, $_ENV));
         });
 
         $c->set(Twig::class, static function (ContainerInterface $c): Twig {
