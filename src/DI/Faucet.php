@@ -145,13 +145,13 @@ final class Faucet implements ServiceProvider
             $app = AppFactory::create(container: $c);
             $app->addErrorMiddleware($settings->debugMode, $settings->debugMode, $settings->debugMode);
 
-            $app->get('/', $c->get(Controller\LandingPage::class));
-            $formRoute = $app->post('/', $c->get(Controller\FormProcessing::class));
+            $app->get('/', Controller\LandingPage::class);
+            $formRoute = $app->post('/', Controller\FormProcessing::class);
 
             // If captcha is enabled register captcha image generation route and
             // activate captcha enforcing middleware on the form route
             if ($settings->useCaptcha) {
-                $app->get('/captcha', $c->get(Controller\CaptchaImage::class));
+                $app->get('/captcha', Controller\CaptchaImage::class);
                 $formRoute->add(Middleware\CheckCaptcha::class);
             }
 
@@ -164,8 +164,8 @@ final class Faucet implements ServiceProvider
             // If user and global limits are both disabled there's no need to
             // activate the Redis spinlock nor the limit enforcement middleware.
             if (null !== $settings->userSessionMaxBtc || null !== $settings->globalSessionMaxBtc) {
-                $formRoute->add($c->get(Middleware\UsageLimits::class));
-                $formRoute->add($c->get(Middleware\RedisLock::class));
+                $formRoute->add(Middleware\UsageLimits::class);
+                $formRoute->add(Middleware\RedisLock::class);
             }
 
             return $app;
