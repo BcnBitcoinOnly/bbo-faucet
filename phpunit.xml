@@ -3,7 +3,7 @@
          xsi:noNamespaceSchemaLocation="https://schema.phpunit.de/11.2/phpunit.xsd"
          beStrictAboutCoverageMetadata="true"
          beStrictAboutOutputDuringTests="true"
-         bootstrap="vendor/autoload.php"
+         bootstrap="autoload.php"
          cacheResult="false"
          executionOrder="depends,defects"
          failOnRisky="true"
@@ -22,9 +22,12 @@
     </source>
 
     <php>
-        <env name="RPC_PASS" value="knots"/>
-        <env name="RPC_URL" value="http://knots:18443"/>
-        <env name="RPC_USER" value="knots"/>
+        <env force="true" name="FAUCET_BITCOIN_RPC_ENDPOINT" value="http://knots:18443"/>
+        <env force="true" name="FAUCET_BITCOIN_RPC_PASS" value="knots"/>
+        <env force="true" name="FAUCET_BITCOIN_RPC_USER" value="knots"/>
+        <env force="true" name="FAUCET_NAME" value="Testing Faucet"/>
+        <env force="true" name="FAUCET_REDIS_ENDPOINT" value="redis:6379"/>
+        <env force="true" name="FAUCET_REDIS_PREFIX" value="testing:"/>
     </php>
 
     <coverage>

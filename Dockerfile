@@ -6,6 +6,7 @@ COPY bin bin
 COPY src src
 COPY views views
 COPY web web
+COPY autoload.php .
 COPY composer.json .
 COPY composer.lock .
 

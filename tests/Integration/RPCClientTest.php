@@ -13,11 +13,18 @@ final class RPCClientTest extends TestCase
 
     protected function setUp(): void
     {
-        $this->sut = new RPCClient($_ENV['RPC_URL'], $_ENV['RPC_USER'], $_ENV['RPC_PASS'], 0, null);
+        $this->sut = new RPCClient(
+            $_ENV['FAUCET_BITCOIN_RPC_ENDPOINT'],
+            $_ENV['FAUCET_BITCOIN_RPC_USER'],
+            $_ENV['FAUCET_BITCOIN_RPC_PASS'],
+            0,
+            null
+        );
     }
 
     public function testValidateAddress(): void
     {
+        self::assertFalse($this->sut->validateAddress('nonsense!'));
         self::assertTrue($this->sut->validateAddress('mwxHTZVYD44DZSoqCNXGzeS2LMB9smqFG6'));
         self::assertFalse($this->sut->validateAddress('nwxHTZVYD44DZSoqCNXGzeS2LMB9smqFG6'));
         self::assertFalse($this->sut->validateAddress('32ixEdVJWo3kmvJGMTZq5jAQVZZeuwnqzo'));
