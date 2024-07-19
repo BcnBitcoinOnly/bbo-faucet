@@ -58,9 +58,9 @@ final readonly class Settings
             $this->bitcoinRpcPass = $values['FAUCET_BITCOIN_RPC_PASS'];
         }
 
-        $this->feeRate = (float) $values['FAUCET_FEE_RATE'] ?: 1.0;
+        $this->feeRate = isset($values['FAUCET_FEE_RATE']) ? (float) $values['FAUCET_FEE_RATE'] : 1.0;
         $this->faucetName = $values['FAUCET_NAME'];
-        $this->mempoolUrl = $values['FAUCET_MEMPOOL_URL'] ?: null;
+        $this->mempoolUrl = $values['FAUCET_MEMPOOL_URL'] ?? null;
         $this->minOneTimeBtc = (float) $values['FAUCET_MIN_ONE_TIME_BTC'];
         $this->maxOneTimeBtc = (float) $values['FAUCET_MAX_ONE_TIME_BTC'];
 
@@ -69,7 +69,7 @@ final readonly class Settings
         $this->globalSessionTtl = (int) $values['FAUCET_GLOBAL_SESSION_TTL'];
         $this->globalSessionMaxBtc = '' === $values['FAUCET_GLOBAL_SESSION_MAX_BTC'] ? null : (float) $values['FAUCET_GLOBAL_SESSION_MAX_BTC'];
 
-        $this->passwordBcryptHash = $values['FAUCET_PASSWORD_BCRYPT_HASH'] ?: null;
+        $this->passwordBcryptHash = $values['FAUCET_PASSWORD_BCRYPT_HASH'] ?? null;
         $this->useCaptcha = (bool) $values['FAUCET_USE_CAPTCHA'];
 
         $this->useTxBatching = (bool) $values['FAUCET_USE_BATCHING'];
