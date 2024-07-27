@@ -1,5 +1,6 @@
 :80 {
 	root * /var/www/signet-faucet/web
+	file_server
 	encode zstd gzip
 	php_fastcgi php-fpm:9000
 }

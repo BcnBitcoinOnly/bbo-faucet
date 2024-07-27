@@ -36,6 +36,7 @@ final class Faucet implements ServiceProvider
             $twig->getEnvironment()->addGlobal('faucet_max_btc', (string) $settings->maxOneTimeBtc);
             $twig->getEnvironment()->addGlobal('use_captcha', $settings->useCaptcha);
             $twig->getEnvironment()->addGlobal('use_password', null !== $settings->passwordBcryptHash);
+            $twig->getEnvironment()->addGlobal('random_nonce', base64_encode(random_bytes(12)));
 
             return $twig;
         });
