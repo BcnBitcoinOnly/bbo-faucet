@@ -4,7 +4,7 @@ faucet.example.com {
 	encode zstd gzip
 	php_fastcgi unix//run/php/php-fpm.sock {
 		resolve_root_symlink
-		env FAUCET_DEBUG 1
+		env FAUCET_DEBUG 0
 		env FAUCET_REDIS_ENDPOINT localhost:6379
 		env FAUCET_REDIS_PREFIX faucet:
 		env FAUCET_BITCOIN_RPC_ENDPOINT http://localhost:38332

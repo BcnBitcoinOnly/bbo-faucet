@@ -12,7 +12,7 @@ use UMA\DIC\Container;
 
 if (!extension_loaded('redis')) {
     http_response_code(500);
-    exit('redis extension not enabled');
+    exit('redis extension not enabled, cannot continue');
 }
 
 require __DIR__.'/../vendor/autoload.php';
