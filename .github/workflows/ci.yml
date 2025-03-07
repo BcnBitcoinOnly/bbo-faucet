@@ -6,16 +6,18 @@ jobs:
   run-tests:
     name: Run linter and tests
     runs-on: ubuntu-latest
+    env:
+      PHP_CS_FIXER_IGNORE_ENV: 1
     steps:
       - uses: actions/checkout@v4
         with:
           fetch-depth: 2
-      - run: docker compose up -d caddy php-fpm knots redis
       - uses: shivammathur/setup-php@v2
         with:
-          php-version: 8.3
+          php-version: 8.4
       - run: composer install
       - run: php vendor/bin/php-cs-fixer check -v
+      - run: docker compose up --wait
       - run: composer setup
       - run: composer test
       - if: always()
@@ -33,7 +35,7 @@ jobs:
         with:
           username: 1maa
           password: ${{ secrets.DOCKER_HUB_PASS }}
-      - uses: docker/build-push-action@v5
+      - uses: docker/build-push-action@v6
         with:
           cache-from: type=registry,ref=1maa/bbo-faucet:latest
           cache-to: type=inline
