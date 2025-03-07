@@ -1,4 +1,4 @@
-FROM 1maa/php-dev:8.3 AS builder
+FROM 1maa/php-dev:8.4 AS builder
 
 WORKDIR /tmp/faucet
 
@@ -14,7 +14,7 @@ RUN composer install --no-dev --classmap-authoritative \
  && chown -R nobody:nobody /tmp/faucet
 
 
-FROM 1maa/php:8.3 AS final
+FROM 1maa/php:8.4 AS final
 
 ENV FAUCET_DEBUG=0
 ENV FAUCET_REDIS_ENDPOINT=redis:6379
