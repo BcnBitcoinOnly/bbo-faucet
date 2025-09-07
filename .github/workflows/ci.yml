@@ -40,5 +40,6 @@ jobs:
           cache-from: type=registry,ref=1maa/bbo-faucet:latest
           cache-to: type=inline
           context: .
+          platforms: linux/amd64,linux/arm64
           push: true
           tags: 1maa/bbo-faucet:latest
