@@ -23,14 +23,14 @@ services:
       - .:/var/www/signet-faucet
     working_dir: /var/www/signet-faucet
 
-  redis:
-    image: redis:7-alpine
+  valkey:
+    image: valkey/valkey:8-alpine
     restart: on-failure
     volumes:
-      - redis_data:/data
+      - valkey_data:/data
 
   knots:
-    image: 1maa/bitcoin:v28.1.knots20250305
+    image: 1maa/bitcoin:v29.2.knots20251010
     healthcheck:
       test: netstat -ltn | grep 18443 > /dev/null
       start_interval: 125ms
@@ -44,4 +44,4 @@ volumes:
   caddy_config:
   caddy_data:
   knots_data:
-  redis_data:
+  valkey_data:
