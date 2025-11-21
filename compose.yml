@@ -30,7 +30,7 @@ services:
       - valkey_data:/data
 
   knots:
-    image: 1maa/bitcoin:v29.2.knots20251010
+    image: 1maa/bitcoin:v29.2.knots20251110
     healthcheck:
       test: netstat -ltn | grep 18443 > /dev/null
       start_interval: 125ms
