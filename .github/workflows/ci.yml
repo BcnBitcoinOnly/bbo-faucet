@@ -8,15 +8,13 @@ jobs:
   run-tests:
     name: Run linter and tests
     runs-on: ubuntu-latest
-    env:
-      PHP_CS_FIXER_IGNORE_ENV: 1
     steps:
       - uses: actions/checkout@v6
         with:
           fetch-depth: 2
       - uses: shivammathur/setup-php@v2
         with:
-          php-version: 8.4
+          php-version: 8.5
       - run: composer install
       - run: php vendor/bin/php-cs-fixer check -v
       - run: docker compose up --wait

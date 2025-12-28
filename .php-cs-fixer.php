@@ -10,7 +10,7 @@ $finder = PhpCsFixer\Finder::create()
         __DIR__.'/web',
     ]);
 
-return (new PhpCsFixer\Config())
+return new PhpCsFixer\Config()
     ->setFinder($finder)
     ->setParallelConfig(PhpCsFixer\Runner\Parallel\ParallelConfigFactory::detect())
     ->setRiskyAllowed(true)

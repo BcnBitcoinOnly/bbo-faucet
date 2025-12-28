@@ -15,7 +15,7 @@ A feature-complete fork of [@kallewoof]'s [bitcoin-faucet] built on the PHP+Redi
 
 ## Requirements
 
-* [PHP-FPM 8.4] daemon with the `redis`, `gd` and `mbstring` extensions enabled.
+* [PHP-FPM 8.5] daemon with the `redis`, `gd` and `mbstring` extensions enabled.
 * An HTTP webserver with FastCGI support (Caddy, nginx, Apache etc.)
 * [Composer] dependency manager
 * Bitcoin node running in signet mode (Core or Knots) with RPC enabled and a wallet with unspent funds
@@ -151,5 +151,5 @@ Changing environment variables requires recreating the `php-fpm` container.
 [@kallewoof]: https://github.com/kallewoof
 [bitcoin-faucet]: https://github.com/kallewoof/bitcoin-faucet
 [BBO signet network]: https://faucet.bitcoinbarcelona.xyz/
-[PHP-FPM 8.4]: https://launchpad.net/~ondrej/+archive/ubuntu/php
+[PHP-FPM 8.5]: https://launchpad.net/~ondrej/+archive/ubuntu/php
 [Composer]: https://getcomposer.org/

@@ -4,6 +4,7 @@
     "type": "project",
     "license": "MIT",
     "require": {
+        "php": "^8.5",
         "ext-gd": "*",
         "ext-mbstring": "*",
         "ext-redis": "*",

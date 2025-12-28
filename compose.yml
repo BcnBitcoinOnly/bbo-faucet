@@ -15,7 +15,7 @@ services:
       - caddy_data:/data
 
   php-fpm:
-    image: 1maa/php:8.4
+    image: 1maa/php:8.5
     restart: on-failure
     env_file:
       - .env.dist
