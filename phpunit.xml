@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <phpunit xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-         xsi:noNamespaceSchemaLocation="https://schema.phpunit.de/11.5/phpunit.xsd"
+         xsi:noNamespaceSchemaLocation="https://schema.phpunit.de/12.5/phpunit.xsd"
          beStrictAboutCoverageMetadata="true"
          beStrictAboutOutputDuringTests="true"
          bootstrap="autoload.php"
@@ -22,7 +22,7 @@
     </source>
 
     <php>
-        <env force="true" name="FAUCET_BITCOIN_RPC_ENDPOINT" value="http://knots:18443"/>
+        <env force="true" name="FAUCET_BITCOIN_RPC_ENDPOINT" value="http://node:18443"/>
         <env force="true" name="FAUCET_BITCOIN_RPC_PASS" value="knots"/>
         <env force="true" name="FAUCET_BITCOIN_RPC_USER" value="knots"/>
         <env force="true" name="FAUCET_NAME" value="Testing Faucet"/>

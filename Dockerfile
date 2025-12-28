@@ -1,14 +1,8 @@
-FROM 1maa/php-dev:8.4 AS builder
+FROM 1maa/php:8.4 AS builder
 
 WORKDIR /tmp/faucet
 
-COPY bin bin
-COPY src src
-COPY views views
-COPY web web
-COPY autoload.php .
-COPY composer.json .
-COPY composer.lock .
+COPY . .
 
 RUN composer install --no-dev --classmap-authoritative \
  && chown -R nobody:nobody /tmp/faucet
@@ -19,7 +13,7 @@ FROM 1maa/php:8.4 AS final
 ENV FAUCET_DEBUG=0
 ENV FAUCET_REDIS_ENDPOINT=redis:6379
 ENV FAUCET_REDIS_PREFIX="faucet:"
-ENV FAUCET_BITCOIN_RPC_ENDPOINT="http://knots:38332"
+ENV FAUCET_BITCOIN_RPC_ENDPOINT="http://node:38332"
 ENV FAUCET_BITCOIN_RPC_USER=knots
 ENV FAUCET_BITCOIN_RPC_PASS=knots
 ENV FAUCET_NAME="Your Signet Faucet"

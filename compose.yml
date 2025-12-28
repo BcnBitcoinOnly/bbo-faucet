@@ -15,7 +15,7 @@ services:
       - caddy_data:/data
 
   php-fpm:
-    image: 1maa/php-dev:8.4
+    image: 1maa/php:8.4
     restart: on-failure
     env_file:
       - .env.dist
@@ -24,13 +24,13 @@ services:
     working_dir: /var/www/signet-faucet
 
   valkey:
-    image: valkey/valkey:8-alpine
+    image: valkey/valkey:9-alpine
     restart: on-failure
     volumes:
       - valkey_data:/data
 
-  knots:
-    image: 1maa/bitcoin:v29.2.knots20251110
+  node:
+    image: 1maa/bitcoin:latest
     healthcheck:
       test: netstat -ltn | grep 18443 > /dev/null
       start_interval: 125ms
@@ -38,10 +38,10 @@ services:
     restart: on-failure
     volumes:
       - ./docs/knots/bitcoin.conf:/home/bitcoin/.bitcoin/bitcoin.conf
-      - knots_data:/home/bitcoin/.bitcoin
+      - node_data:/home/bitcoin/.bitcoin
 
 volumes:
   caddy_config:
   caddy_data:
-  knots_data:
+  node_data:
   valkey_data:

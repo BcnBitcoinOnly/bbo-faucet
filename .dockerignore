@@ -1,0 +1,10 @@
+**
+
+!/bin/
+!/src/
+!/views/
+!/web/
+
+!/autoload.php
+!/composer.json
+!/composer.lock

@@ -119,7 +119,7 @@ $ composer test
 Arbitrary `bitcoin-cli` commands can be run like so:
 
 ```shell
-$ docker compose exec knots bitcoin-cli help send
+$ docker compose exec node bitcoin-cli help send
 ```
 
 To customize the Docker stack create a `compose.override.yml` at the root. On `docker compose up -d` it'll be automatically merged with `compose.yml`.
