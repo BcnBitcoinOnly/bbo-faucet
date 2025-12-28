@@ -46,7 +46,7 @@ final readonly class Settings
         }
 
         $this->bitcoinRpcEndpoint = $rpcEndpoint;
-        $this->bitcoinRpcWallet = $values['FAUCET_BITCOIN_RPC_WALLET'] ?: null;
+        $this->bitcoinRpcWallet = $values['FAUCET_BITCOIN_RPC_WALLET'] ?? null;
         if ($cookie = $values['FAUCET_BITCOIN_RPC_COOKIE']) {
             if (!is_file($cookie) || !is_readable($cookie)) {
                 exit('Unreadable bitcoind cookie file: '.$cookie);
