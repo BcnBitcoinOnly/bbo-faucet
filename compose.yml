@@ -2,7 +2,7 @@ name: faucet
 
 services:
   caddy:
-    image: caddy:2.10-alpine
+    image: caddy@sha256:fce4f15aad23222c0ac78a1220adf63bae7b94355d5ea28eee53910624acedfa # :alpine
     depends_on:
       - php-fpm
     ports:
@@ -24,7 +24,7 @@ services:
     working_dir: /var/www/signet-faucet
 
   valkey:
-    image: valkey/valkey:9-alpine
+    image: valkey/valkey@sha256:84c96f47ebe197e635cd3ddbe3ab74e8bdf783cf3befbfb1c36387275c1cd5d5 # :9-alpine
     restart: on-failure
     volumes:
       - valkey_data:/data
