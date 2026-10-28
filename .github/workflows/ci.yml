@@ -37,11 +37,9 @@ jobs:
         with:
           username: 1maa
           password: ${{ secrets.DOCKER_HUB_PASS }}
-      - uses: docker/build-push-action@c3c9e263c25d99ce0380d002d59b67737d91b0dc # v7.4.0
+      - uses: docker/bake-action@018cb6412ab401ebaa809aa5f85966b74628600f # v7.4.0
         with:
-          cache-from: type=registry,ref=1maa/bbo-faucet:latest
-          cache-to: type=inline
-          context: .
-          platforms: linux/amd64,linux/arm64
+          provenance: false
           push: true
-          tags: 1maa/bbo-faucet:latest
+          sbom: false
+          targets: bbo-faucet
